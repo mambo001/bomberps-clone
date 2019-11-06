@@ -24,6 +24,7 @@ export default {
     addPlayer(id) {
         let player = new Player(id, "bomberman");
         this.mainContainer.addChild(player.sprite);
+        this.mainContainer.addChild(player.debugText);
         this.players[id] = player;
         console.log("Added player ", player);
     }

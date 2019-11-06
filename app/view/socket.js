@@ -47,13 +47,13 @@ export default {
             this.gameState.addPlayer(id);
             console.log("event player-add ", id, pos);
             if (typeof pos !== "undefined") {
-                this.gameState.players[id].sprite.x = pos.x * 32;
-                this.gameState.players[id].sprite.y = pos.y * 32;
+                this.gameState.players[id].x = pos.x;
+                this.gameState.players[id].y = pos.y;
             }
         });
         this.socket.on("player-update", arg => {
-            this.gameState.players[arg.id].sprite.x = arg.pos.x * 32;
-            this.gameState.players[arg.id].sprite.y = arg.pos.y * 32;
+            this.gameState.players[arg.id].x = arg.pos.x;
+            this.gameState.players[arg.id].y = arg.pos.y;
         });
         this.socket.on("player-remove", ({ id }) => {
             let player = this.gameState.players[id];

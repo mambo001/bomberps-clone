@@ -3,12 +3,6 @@ import keyboard from "./keyboard";
 import socketManager from "./socket";
 import gameState from "./gamestate";
 
-const TILE_SIZE = 32;
-const MAP_TILE_WIDTH = 15;
-const MAP_PIXEL_WIDTH = MAP_TILE_WIDTH * TILE_SIZE;
-const MAP_TILE_HEIGHT = 13;
-const MAP_PIXEL_HEIGHT = TILE_SIZE * MAP_TILE_HEIGHT;
-
 const app = new PIXI.Application({
     width: MAP_PIXEL_WIDTH,
     height: MAP_PIXEL_HEIGHT

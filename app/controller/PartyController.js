@@ -45,7 +45,8 @@ class PartyController extends Controller {
         socket._playerInstance = player;
 
         party.broadcast("player-add", {
-            id: player.id
+            id: player.id,
+            pos: player.position
         });
     }
 }
