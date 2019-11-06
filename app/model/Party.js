@@ -56,23 +56,76 @@ class Party {
         this.lastUpdateTime = currentTime;
     }
 
+    isTileBlocked(x, y) {
+        if (this.map[y][x] !== 0) return true;
+        return false;
+    }
+
+    isTileBlockedByOtherPlayer(except, x, y) {
+        for (const player of this._players) {
+            if (
+                player.id !== except.id &&
+                player.tileX === x &&
+                player.tileY === y
+            )
+                return true;
+        }
+        return false;
+    }
+
     _updatePlayer(delta, player) {
         if (player.moving.length == 0) {
             player.isDirty = false;
         } else {
-            let canUp = this.map[player.tileY - 1][player.tileX] === 0;
-            let canDown = this.map[player.tileY + 1][player.tileX] === 0;
-            let canLeft = this.map[player.tileY][player.tileX - 1] === 0;
-            let canRight = this.map[player.tileY][player.tileX + 1] === 0;
+            let canUp =
+                !this.isTileBlocked(player.tileX, player.tileY - 1) &&
+                !this.isTileBlockedByOtherPlayer(
+                    player,
+                    player.tileX,
+                    player.tileY - 1
+                );
+            let canDown =
+                !this.isTileBlocked(player.tileX, player.tileY + 1) &&
+                !this.isTileBlockedByOtherPlayer(
+                    player,
+                    player.tileX,
+                    player.tileY + 1
+                );
+            let canLeft =
+                !this.isTileBlocked(player.tileX - 1, player.tileY) &&
+                !this.isTileBlockedByOtherPlayer(
+                    player,
+                    player.tileX - 1,
+                    player.tileY
+                );
+            let canRight =
+                !this.isTileBlocked(player.tileX + 1, player.tileY) &&
+                !this.isTileBlockedByOtherPlayer(
+                    player,
+                    player.tileX + 1,
+                    player.tileY
+                );
 
             if (player.moving) {
                 let nextPos = {
                     x: player.x,
                     y: player.y
                 };
+                nextPos.tileX = Math.floor(nextPos.x);
+                nextPos.tileY = Math.floor(nextPos.y);
+
                 if (player.currentDisplacement === "up") {
                     nextPos.y -= player.speed * delta;
-                    if (this.getTileAtPos(nextPos) === 0) {
+                    nextPos.tileY = Math.floor(nextPos.y);
+                    // Check if tile is blocking
+                    if (
+                        !this.isTileBlocked(nextPos.tileX, nextPos.tileY) &&
+                        !this.isTileBlockedByOtherPlayer(
+                            player,
+                            nextPos.tileX,
+                            nextPos.tileY
+                        )
+                    ) {
                         // Test if next displacement is changing direction
                         // In that case we want to finish diplacement from one tile
                         if (nextPos.y < player.targetTile.y + 0.5) {
@@ -85,7 +138,6 @@ class Party {
                             console.log("Displacement ended (reached dest)");
                         }
                     } else {
-                        // Uptile is blocking
                         nextPos.y = player.targetTile.y + 0.5;
                         player.currentDisplacement = "none";
                         player.moving = false;
@@ -95,7 +147,15 @@ class Party {
                 }
                 if (player.currentDisplacement === "down") {
                     nextPos.y += player.speed * delta;
-                    if (this.getTileAtPos(nextPos) === 0) {
+                    nextPos.tileY = Math.floor(nextPos.y);
+                    if (
+                        !this.isTileBlocked(nextPos.tileX, nextPos.tileY) &&
+                        !this.isTileBlockedByOtherPlayer(
+                            player,
+                            nextPos.tileX,
+                            nextPos.tileY
+                        )
+                    ) {
                         // Test if next displacement is changing direction
                         // In that case we want to finish diplacement from one tile
                         if (nextPos.y > player.targetTile.y + 0.5) {
@@ -108,7 +168,6 @@ class Party {
                             console.log("Displacement ended (reached dest)");
                         }
                     } else {
-                        // Uptile is blocking
                         nextPos.y = player.targetTile.y + 0.5;
                         player.currentDisplacement = "none";
                         player.moving = false;
@@ -118,7 +177,16 @@ class Party {
                 }
                 if (player.currentDisplacement === "left") {
                     nextPos.x -= player.speed * delta;
-                    if (this.getTileAtPos(nextPos) === 0) {
+                    nextPos.tileX = Math.floor(nextPos.x);
+
+                    if (
+                        !this.isTileBlocked(nextPos.tileX, nextPos.tileY) &&
+                        !this.isTileBlockedByOtherPlayer(
+                            player,
+                            nextPos.tileX,
+                            nextPos.tileY
+                        )
+                    ) {
                         // Test if next displacement is changing direction
                         // In that case we want to finish diplacement from one tile
                         if (nextPos.x < player.targetTile.x + 0.5) {
@@ -141,7 +209,16 @@ class Party {
                 }
                 if (player.currentDisplacement === "right") {
                     nextPos.x += player.speed * delta;
-                    if (this.getTileAtPos(nextPos) === 0) {
+                    nextPos.tileX = Math.floor(nextPos.x);
+
+                    if (
+                        !this.isTileBlocked(nextPos.tileX, nextPos.tileY) &&
+                        !this.isTileBlockedByOtherPlayer(
+                            player,
+                            nextPos.tileX,
+                            nextPos.tileY
+                        )
+                    ) {
                         // Test if next displacement is changing direction
                         // In that case we want to finish diplacement from one tile
                         if (nextPos.x > player.targetTile.x + 0.5) {
