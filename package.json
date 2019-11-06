@@ -1,0 +1,28 @@
+{
+    "name": "bomberps",
+    "version": "1.0.0",
+    "description": "Bomberman clone",
+    "main": "app/entry.js",
+    "author": "Zetsyog <zetsyog@gmail.com>",
+    "license": "GPL-3.0-or-later",
+    "scripts": {
+        "build": "webpack --mode development",
+        "start": "node app/entry.js"
+    },
+    "dependencies": {
+        "express": "^4.17.1",
+        "pixi.js": "^5.1.5",
+        "socket.io": "^2.3.0"
+    },
+    "devDependencies": {
+        "@babel/core": "^7.6.4",
+        "@babel/preset-env": "^7.6.3",
+        "babel-loader": "^8.0.6",
+        "copy-webpack-plugin": "^5.0.4",
+        "html-loader": "^0.5.5",
+        "html-webpack-plugin": "^3.2.0",
+        "webpack": "^4.41.2",
+        "webpack-cli": "^3.3.10",
+        "webpack-node-externals": "^1.7.2"
+    }
+}
