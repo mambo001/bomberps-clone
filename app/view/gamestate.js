@@ -23,6 +23,7 @@ export default {
     wallSprites: [],
     players: {},
     entities: [],
+    effects: [],
     addPlayer(id) {
         let player = new Player(id, "bomberman");
         this.mainContainer.addChild(player.sprite);
@@ -56,5 +57,53 @@ export default {
                 return;
             }
         }
+    },
+    createExplosion(x, y, radius) {
+        const graphics = new PIXI.Graphics();
+        graphics.beginFill(0xff0000, 0.6);
+        graphics.drawRect(x * TILE_SIZE, y * TILE_SIZE, TILE_SIZE, TILE_SIZE);
+        for (let i = 1; i <= radius; i++) {
+            if (this.map[y][x - i] !== 0) break;
+            graphics.drawRect(
+                (x - i) * TILE_SIZE,
+                y * TILE_SIZE,
+                TILE_SIZE,
+                TILE_SIZE
+            );
+        }
+        for (let i = 1; i <= radius; i++) {
+            if (this.map[y][x + i] !== 0) break;
+            graphics.drawRect(
+                (x + i) * TILE_SIZE,
+                y * TILE_SIZE,
+                TILE_SIZE,
+                TILE_SIZE
+            );
+        }
+        for (let i = 1; i <= radius; i++) {
+            if (this.map[y - i][x] !== 0) break;
+            graphics.drawRect(
+                x * TILE_SIZE,
+                (y - i) * TILE_SIZE,
+                TILE_SIZE,
+                TILE_SIZE
+            );
+        }
+        for (let i = 1; i <= radius; i++) {
+            if (this.map[y + i][x] !== 0) break;
+            graphics.drawRect(
+                x * TILE_SIZE,
+                (y + i) * TILE_SIZE,
+                TILE_SIZE,
+                TILE_SIZE
+            );
+        }
+        graphics.endFill();
+
+        this.app.stage.addChild(graphics);
+        setTimeout(() => {
+            console.log("Destroying explosion");
+            graphics.destroy();
+        }, 3000);
     }
 };

@@ -12,7 +12,7 @@ class Party {
     constructor(id) {
         this._id = id;
         this.lastUpdateTime = hrtimeMs;
-        this._handle = setInterval(() => this.update(), 1000 / 60);
+        this._handle = setInterval(() => this.loop(), 1000 / 60);
 
         this.level = new Level();
     }
@@ -25,13 +25,18 @@ class Party {
         return this.level.players.length;
     }
 
-    update() {
-        var currentTime = hrtimeMs();
-        var delta = (currentTime - this.lastUpdateTime) / 1000;
-
-        this.level.update(delta);
+    update(delta) {
+        for (var bomb of this.level.bombs) {
+            bomb.update(delta);
+            if (bomb.mustExplode) {
+                this.createExplosion(bomb.tileX, bomb.tileY, 3);
+                this.removeBomb(bomb);
+            }
+        }
 
         for (const player of this.level.players) {
+            player.update(delta);
+            this.level.updatePlayer(delta, player);
             if (player.isDirty) {
                 this.broadcast("player-update", {
                     id: player.id,
@@ -39,12 +44,56 @@ class Party {
                 });
             }
         }
+    }
+
+    loop() {
+        var currentTime = hrtimeMs();
+        var delta = (currentTime - this.lastUpdateTime) / 1000;
+
+        this.update(delta);
 
         this.lastUpdateTime = currentTime;
     }
 
-    getTileAtPos(pos) {
-        return this.map[Math.floor(pos.y)][Math.floor(pos.x)];
+    createExplosion(x, y, radius) {
+        // Explode tiles at right
+        for (let i = 0; i <= radius; i++) {
+            if (x + i > 15) break;
+            if (this.level.isTileBlocked(x + i, y)) {
+                break;
+            }
+            this.level.explodeTile(x + i, y);
+        }
+        // Explode tiles at left
+        for (let i = 0; i <= radius; i++) {
+            if (x - i < 0) break;
+            if (this.level.isTileBlocked(x - i, y)) {
+                break;
+            }
+            this.level.explodeTile(x - i, y);
+        }
+        // Explode up tiles
+        for (let i = 0; i <= radius; i++) {
+            if (y - i < 0) break;
+            if (this.level.isTileBlocked(x, y - i)) {
+                break;
+            }
+            this.level.explodeTile(x, y - i);
+        }
+        // Explode down tiles
+        for (let i = 0; i <= radius; i++) {
+            if (y + i > 13) break;
+            if (this.level.isTileBlocked(x, y + i)) {
+                break;
+            }
+            this.level.explodeTile(x, y + i);
+        }
+        this.broadcast("effect", {
+            type: "explosion",
+            x: x,
+            y: y,
+            radius: radius
+        });
     }
 
     broadcast(eventName, arg) {
@@ -88,8 +137,13 @@ class Party {
                 x: bomb.x,
                 y: bomb.y
             });
-            console.log("Bomb added !");
+            console.log("Bomb (%i) added !", bomb.id);
         }
+    }
+
+    removeBomb(bomb) {
+        this.level.bombs.splice(bomb.index, 1);
+        this.broadcast("entity-remove", { id: bomb.id });
     }
 
     removePlayer(socket) {

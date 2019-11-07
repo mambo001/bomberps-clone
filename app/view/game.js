@@ -4,6 +4,7 @@ import socketManager from "./socket";
 import gameState from "./gamestate";
 
 const app = new PIXI.Application({
+    antialias: true,
     width: MAP_PIXEL_WIDTH,
     height: MAP_PIXEL_HEIGHT
 });

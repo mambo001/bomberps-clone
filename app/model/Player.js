@@ -74,7 +74,7 @@ class Player extends Entity {
         this.socket.on("player-input", ({ direction, move }) => {
             if (move) {
                 //console.log("Player %s started moving %s", this.id, direction);
-                console.log("Added %s to displacement queue", direction);
+                //console.log("Added %s to displacement queue", direction);
                 this.displacementQueue.push(direction);
                 this.moving = true;
             } else {
@@ -82,7 +82,7 @@ class Player extends Entity {
                     this.displacementQueue.indexOf(direction),
                     1
                 );
-                console.log("Removed %s from displacement queue", direction);
+                //console.log("Removed %s from displacement queue", direction);
                 //console.log(this.position);
             }
         });

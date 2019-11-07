@@ -68,5 +68,11 @@ export default {
         this.socket.on("entity-remove", ({ id }) => {
             this.gameState.removeEntity(id);
         });
+        this.socket.on("effect", param => {
+            if (param.type === "explosion") {
+                console.log("creating explosion");
+                this.gameState.createExplosion(param.x, param.y, param.radius);
+            }
+        });
     }
 };

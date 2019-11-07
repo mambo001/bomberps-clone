@@ -37,6 +37,19 @@ class Level {
         this.nextId = 0;
     }
 
+    explodeTile(x, y) {
+        for (const player of this.players) {
+            if (player.tileX == x && player.tileY == y) {
+                // TODO : player dies
+            }
+        }
+        // Destroy adjacent obstacles if they exists
+        if (this.tiles[x][y + 1] == 2) this.setTile(x, y + 1, 0);
+        if (this.tiles[x][y - 1] == 2) this.setTile(x, y - 1, 0);
+        if (this.tiles[x - 1][y] == 2) this.setTile(x - 1, y, 0);
+        if (this.tiles[x + 1][y] == 2) this.setTile(x + 1, y, 0);
+    }
+
     addBomb(player) {
         if (this.getBombsInArea(player.tileX, player.tileY).length !== 0) {
             console.log("There is already a bomb in there, canceling...");
@@ -49,6 +62,9 @@ class Level {
             player.tileY + 0.5
         );
         this.bombs.push(bomb);
+        bomb.index = this.bombs.findIndex(x => {
+            return x.id === bomb.id;
+        });
         player.startBombCooldown();
         return bomb;
     }
@@ -89,14 +105,7 @@ class Level {
         return false;
     }
 
-    update(delta) {
-        for (const player of this.players) {
-            player.update(delta);
-            this._updatePlayer(delta, player);
-        }
-    }
-
-    _updatePlayer(delta, player) {
+    updatePlayer(delta, player) {
         if (player.moving.length == 0) {
             player.isDirty = false;
         } else {
