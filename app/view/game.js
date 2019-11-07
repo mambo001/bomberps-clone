@@ -44,7 +44,8 @@ function init() {
     var up = keyboard("z"),
         down = keyboard("s"),
         left = keyboard("q"),
-        right = keyboard("d");
+        right = keyboard("d"),
+        bomb = keyboard(" ");
 
     up.press = () => {
         socketManager.sendInput("up", true);
@@ -69,6 +70,16 @@ function init() {
     };
     right.release = () => {
         socketManager.sendInput("right", false);
+    };
+    var canBomb = true;
+    bomb.press = () => {
+        if (canBomb) {
+            socketManager.sendInput("bomb");
+            canBomb = false;
+        }
+    };
+    bomb.release = () => {
+        canBomb = true;
     };
 
     app.stage.addChild(mainContainer);

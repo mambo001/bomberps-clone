@@ -35,9 +35,8 @@ export default {
                 });
                 break;
             case "bomb":
-                this.socket.emit("player-input", {
-                    direction: inputType,
-                    move: arg
+                this.socket.emit("player-action", {
+                    type: "bomb"
                 });
                 break;
         }
@@ -59,6 +58,15 @@ export default {
             let player = this.gameState.players[id];
             this.gameState.mainContainer.removeChild(player.sprite);
             delete this.gameState.players[id];
+        });
+        this.socket.on("entity-add", ({ id, texture, x, y }) => {
+            this.gameState.addEntity(id, texture, x, y);
+        });
+        this.socket.on("entity-update", ({ id, x, y }) => {
+            this.gameState.updateEntity(id, x, y);
+        });
+        this.socket.on("entity-remove", ({ id }) => {
+            this.gameState.removeEntity(id);
         });
     }
 };

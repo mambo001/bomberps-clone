@@ -3,7 +3,7 @@ const CopyWebpackPlugin = require("copy-webpack-plugin");
 const HTMLWebpackPlugin = require("html-webpack-plugin");
 const webpack = require("webpack");
 
-const CLIENT_TILE_SIZE = 32;
+const CLIENT_TILE_SIZE = 64;
 const MAP_TILE_WIDTH = 15;
 const MAP_PIXEL_WIDTH = MAP_TILE_WIDTH * CLIENT_TILE_SIZE;
 const MAP_TILE_HEIGHT = 13;

@@ -1,14 +1,13 @@
-const DEFAULT_PLAYER_SPEED = 3;
+const Entity = require("./Entity");
+
+const DEFAULT_PLAYER_SPEED = 5;
 const DEFAULT_PLAYER_SIZE = 1;
 
-class Player {
+class Player extends Entity {
     constructor(socket) {
+        super();
         this._socket = socket;
-        this._x = 0;
-        this._y = 0;
-        this._tiledPostion;
         this.speed = DEFAULT_PLAYER_SPEED;
-        this.subscribe();
         this.isDirty = false;
         this.displacementQueue = [];
         this.currentDisplacement = "none";
@@ -19,26 +18,24 @@ class Player {
         this.moving = false;
         this.size = DEFAULT_PLAYER_SIZE;
 
-        this.x = 2.5;
+        this.x = 3.5;
         this.y = 6.5;
+
+        this.bombCooldown = 2.5;
+        this.currentCooldown = 0;
     }
 
-    get x() {
-        return this._x;
+    update(delta) {
+        if (this.currentCooldown > 0) {
+            this.currentCooldown -= delta;
+        }
+        if (this.currentCooldown < 0) {
+            this.currentCooldown = 0;
+        }
     }
 
-    get y() {
-        return this._y;
-    }
-
-    set x(newX) {
-        this._x = newX;
-        this._tileX = Math.floor(newX);
-    }
-
-    set y(newY) {
-        this._y = newY;
-        this._tileY = Math.floor(newY);
+    get canBomb() {
+        return this.currentCooldown === 0;
     }
 
     get position() {
@@ -46,14 +43,6 @@ class Player {
             x: this.x,
             y: this.y
         };
-    }
-
-    get tileX() {
-        return this._tileX;
-    }
-
-    get tileY() {
-        return this._tileY;
     }
 
     get id() {
@@ -70,7 +59,18 @@ class Player {
             : "none";
     }
 
-    subscribe() {
+    startBombCooldown() {
+        this.currentCooldown = this.bombCooldown;
+    }
+
+    bomb(party) {
+        if (this.canBomb) {
+            console.log("No cooldown. Trying to pose bomb");
+            party.poseBomb(this);
+        }
+    }
+
+    subscribe(party) {
         this.socket.on("player-input", ({ direction, move }) => {
             if (move) {
                 //console.log("Player %s started moving %s", this.id, direction);
@@ -86,10 +86,17 @@ class Player {
                 //console.log(this.position);
             }
         });
+        this.socket.on("player-action", ({ type }) => {
+            if (type === "bomb") {
+                console.log("Received bomb request");
+                this.bomb(party);
+            }
+        });
     }
 
     unsubscribe() {
         this.socket.removeAllListeners("player-input");
+        this.socket.removeAllListeners("player-action");
     }
 }
 
