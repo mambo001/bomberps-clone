@@ -32,9 +32,13 @@ class Level {
             [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
             [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
         ];
-        this.bombs = [];
+        this._bombs = [];
         this.players = [];
         this.nextId = 0;
+    }
+
+    get bombs() {
+        return this._bombs;
     }
 
     explodeTile(x, y) {
@@ -61,12 +65,17 @@ class Level {
             player.tileX + 0.5,
             player.tileY + 0.5
         );
-        this.bombs.push(bomb);
-        bomb.index = this.bombs.findIndex(x => {
-            return x.id === bomb.id;
-        });
+        this._bombs.push(bomb);
         player.startBombCooldown();
         return bomb;
+    }
+
+    removeBomb(bomb) {
+        for (let i = 0; i < this._bombs.length; i++) {
+            if (this._bombs[i].id === bomb.id) {
+                this._bombs.splice(i, 1);
+            }
+        }
     }
 
     getBombsInArea(x, y, radius) {

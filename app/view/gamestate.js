@@ -61,8 +61,15 @@ export default {
     createExplosion(x, y, radius) {
         const graphics = new PIXI.Graphics();
         graphics.beginFill(0xff0000, 0.6);
-        graphics.drawRect(x * TILE_SIZE, y * TILE_SIZE, TILE_SIZE, TILE_SIZE);
-        for (let i = 1; i <= radius; i++) {
+        if (radius > 0) {
+            graphics.drawRect(
+                x * TILE_SIZE,
+                y * TILE_SIZE,
+                TILE_SIZE,
+                TILE_SIZE
+            );
+        }
+        for (let i = 1; i < radius; i++) {
             if (this.map[y][x - i] !== 0) break;
             graphics.drawRect(
                 (x - i) * TILE_SIZE,
@@ -71,7 +78,7 @@ export default {
                 TILE_SIZE
             );
         }
-        for (let i = 1; i <= radius; i++) {
+        for (let i = 1; i < radius; i++) {
             if (this.map[y][x + i] !== 0) break;
             graphics.drawRect(
                 (x + i) * TILE_SIZE,
@@ -80,7 +87,7 @@ export default {
                 TILE_SIZE
             );
         }
-        for (let i = 1; i <= radius; i++) {
+        for (let i = 1; i < radius; i++) {
             if (this.map[y - i][x] !== 0) break;
             graphics.drawRect(
                 x * TILE_SIZE,
@@ -89,7 +96,7 @@ export default {
                 TILE_SIZE
             );
         }
-        for (let i = 1; i <= radius; i++) {
+        for (let i = 1; i < radius; i++) {
             if (this.map[y + i][x] !== 0) break;
             graphics.drawRect(
                 x * TILE_SIZE,

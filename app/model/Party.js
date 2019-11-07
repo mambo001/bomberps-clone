@@ -26,13 +26,16 @@ class Party {
     }
 
     update(delta) {
-        for (var bomb of this.level.bombs) {
+        let bomb;
+        for (let i = 0; i < this.level.bombs.length; i++) {
+            bomb = this.level.bombs[i];
             bomb.update(delta);
             if (bomb.mustExplode) {
                 this.createExplosion(bomb.tileX, bomb.tileY, 3);
                 this.removeBomb(bomb);
             }
         }
+        bomb = undefined;
 
         for (const player of this.level.players) {
             player.update(delta);
@@ -57,7 +60,7 @@ class Party {
 
     createExplosion(x, y, radius) {
         // Explode tiles at right
-        for (let i = 0; i <= radius; i++) {
+        for (let i = 0; i < radius; i++) {
             if (x + i > 15) break;
             if (this.level.isTileBlocked(x + i, y)) {
                 break;
@@ -65,7 +68,7 @@ class Party {
             this.level.explodeTile(x + i, y);
         }
         // Explode tiles at left
-        for (let i = 0; i <= radius; i++) {
+        for (let i = 0; i < radius; i++) {
             if (x - i < 0) break;
             if (this.level.isTileBlocked(x - i, y)) {
                 break;
@@ -73,7 +76,7 @@ class Party {
             this.level.explodeTile(x - i, y);
         }
         // Explode up tiles
-        for (let i = 0; i <= radius; i++) {
+        for (let i = 0; i < radius; i++) {
             if (y - i < 0) break;
             if (this.level.isTileBlocked(x, y - i)) {
                 break;
@@ -81,7 +84,7 @@ class Party {
             this.level.explodeTile(x, y - i);
         }
         // Explode down tiles
-        for (let i = 0; i <= radius; i++) {
+        for (let i = 0; i < radius; i++) {
             if (y + i > 13) break;
             if (this.level.isTileBlocked(x, y + i)) {
                 break;
@@ -142,7 +145,9 @@ class Party {
     }
 
     removeBomb(bomb) {
-        this.level.bombs.splice(bomb.index, 1);
+        this.level.removeBomb(bomb);
+        console.log("bombs len = ", this.level.bombs.length);
+
         this.broadcast("entity-remove", { id: bomb.id });
     }
 
