@@ -6,7 +6,14 @@ export default {
         this.socket = io();
         this.subscribe();
         this.gameState = gameState;
-        this.socket.emit("join-game");
+
+        const userNameMatches = window.location.href.match(
+            /^(.*)\?username=(.*)$/
+        );
+        let username = userNameMatches && userNameMatches[2];
+        if (username) {
+            this.socket.emit("verify", username);
+        }
     },
     sendInput(inputType, arg) {
         switch (inputType) {
@@ -39,6 +46,14 @@ export default {
                     type: "bomb"
                 });
                 break;
+        }
+    },
+    loginAsGuest() {
+        this.socket.emit("login-as-guest");
+    },
+    joinQueue() {
+        if (this.gameState.connected) {
+            this.socket.emit("join-queue");
         }
     },
     subscribe() {
@@ -77,19 +92,40 @@ export default {
         this.socket.on("join-game", () => {
             if (!this.gameState.inGame) {
                 this.gameState.inGame = true;
-                this.gameState.stage.addChild(this.gameState.mainContainer);
+                this.gameState.app.stage.removeChild(
+                    this.gameState.uiContainer
+                );
+                this.gameState.app.stage.addChild(this.gameState.mainContainer);
             }
         });
         this.socket.on("leave-game", () => {
             if (this.gameState.inGame) {
                 this.gameState.inGame = false;
-                this.gameState.stage.removeChild(this.gameState.mainContainer);
+                this.gameState.app.stage.removeChild(
+                    this.gameState.mainContainer
+                );
+                this.gameState.app.stage.addChild(this.gameState.uiContainer);
+
                 this.gameState.resetStage();
             }
         });
         this.socket.on("map-set", map => {
             if (!this.gameState.inGame) return;
             this.gameState.setMap(map);
+        });
+
+        this.socket.on("connectedAs", ({ username }) => {
+            console.log("connected", username);
+            this.gameState.uiContainer.removeChild(
+                this.gameState.loginButtonGroup
+            );
+            this.gameState.queueJoinBtn.addToContainer(
+                this.gameState.uiContainer
+            );
+            window.location.pathname = "/";
+            this.gameState.connected = true;
+            this.gameState.connectedAs = username;
+            this.gameState.addHUDText();
         });
     }
 };

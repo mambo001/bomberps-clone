@@ -44,7 +44,9 @@ export default class Button {
 
         this.onClick = () => {};
 
-        this.sprite.on("pointerdown", this.onClick);
+        this.sprite.on("pointerdown", () => {
+            this.onClick();
+        });
     }
 
     addToContainer(container) {

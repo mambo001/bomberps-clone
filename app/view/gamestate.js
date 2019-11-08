@@ -5,6 +5,9 @@ export default {
     inGame: false,
     app: null,
     mainContainer: null,
+    uiContainer: null,
+    hudContainer: null,
+    connected: false,
     map: [
         [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
         [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
@@ -165,7 +168,7 @@ export default {
                     sprite.type = map[y][x];
 
                     this.map[y][x] = sprite;
-                    mainContainer.addChild(sprite);
+                    this.mainContainer.addChild(sprite);
                 }
                 sprite = null;
             }
@@ -190,6 +193,14 @@ export default {
 
             this.map[y][x] = sprite;
             mainContainer.addChild(sprite);
+        }
+    },
+    addHUDText() {
+        if (this.connected) {
+            let text = new PIXI.Text(this.connectedAs);
+            text.x = 5;
+            text.y = 5;
+            this.hudContainer.addChild(text);
         }
     }
 };

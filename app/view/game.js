@@ -3,6 +3,7 @@ import keyboard from "./keyboard";
 import socketManager from "./socket";
 import gameState from "./gamestate";
 import Button from "./button";
+import socket from "./socket";
 
 const app = new PIXI.Application({
     antialias: true,
@@ -72,19 +73,55 @@ function init() {
     socketManager.init(gameState);
 
     var uiContainer = new PIXI.Container();
+
+    let loginButtonGroup = new PIXI.Container();
+
     let playAsGuest = new Button(
         "Jouer en tant qu'invité",
         app.view.width / 2,
         app.view.height / 2,
-        340,
+        350,
         75
     );
-    playAsGuest.addToContainer(uiContainer);
+    playAsGuest.onClick = () => {
+        console.log("Clicked !");
+        socketManager.loginAsGuest();
+    };
+    playAsGuest.addToContainer(loginButtonGroup);
 
+    let login = new Button(
+        "Se connecter (unistra)",
+        app.view.width / 2,
+        app.view.height / 2 - 100,
+        350,
+        75
+    );
+    login.onClick = () => {
+        window.location.href = "/cas/redirect";
+    };
+    login.addToContainer(loginButtonGroup);
+
+    uiContainer.addChild(loginButtonGroup);
     app.stage.addChild(uiContainer);
     console.log(playAsGuest);
 
+    let queueJoinBtn = new Button(
+        "Chercher une partie",
+        app.view.width / 2,
+        app.view.height / 2,
+        450,
+        75
+    );
+    queueJoinBtn.onClick = () => {
+        socketManager.joinQueue();
+    };
+
+    gameState.hudContainer = new PIXI.Container();
+    app.stage.addChild(gameState.hudContainer);
+
     gameState.app = app;
+    gameState.loginButtonGroup = loginButtonGroup;
+    gameState.queueJoinBtn = queueJoinBtn;
     gameState.uiContainer = uiContainer;
     gameState.mainContainer = mainContainer;
 }
