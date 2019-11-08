@@ -74,5 +74,22 @@ export default {
                 this.gameState.createExplosion(param.x, param.y, param.radius);
             }
         });
+        this.socket.on("join-game", () => {
+            if (!this.gameState.inGame) {
+                this.gameState.inGame = true;
+                this.gameState.stage.addChild(this.gameState.mainContainer);
+            }
+        });
+        this.socket.on("leave-game", () => {
+            if (this.gameState.inGame) {
+                this.gameState.inGame = false;
+                this.gameState.stage.removeChild(this.gameState.mainContainer);
+                this.gameState.resetStage();
+            }
+        });
+        this.socket.on("map-set", map => {
+            if (!this.gameState.inGame) return;
+            this.gameState.setMap(map);
+        });
     }
 };

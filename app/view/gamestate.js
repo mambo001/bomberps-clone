@@ -2,28 +2,60 @@ import Player from "./player";
 import * as PIXI from "pixi.js";
 
 export default {
-    inGame: true,
+    inGame: false,
     app: null,
     mainContainer: null,
     map: [
-        [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
-        [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
-        [1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1],
-        [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
-        [1, 0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 1],
-        [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
-        [1, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 1],
-        [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
-        [1, 0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 1],
-        [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
-        [1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1],
-        [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
-        [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1]
+        [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
     ],
     wallSprites: [],
     players: {},
     entities: [],
     effects: [],
+    resetStage() {
+        for (let y = 0; y < this.map.length; y++) {
+            for (let x = 0; x < this.map[y].length; x++) {
+                if (this.map[y][x] !== 0) {
+                    this.map[y][x].destroy();
+                }
+            }
+        }
+        for (const player of this.players) {
+            player.destroy();
+        }
+        for (const entity of this.entities) {
+            entity.destroy();
+        }
+        this.map = [
+            [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+            [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+            [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+            [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+            [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+            [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+            [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+            [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+            [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+            [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+            [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+            [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+            [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+        ];
+        this.entities = [];
+        this.players = [];
+    },
     addPlayer(id) {
         let player = new Player(id, "bomberman");
         this.mainContainer.addChild(player.sprite);
@@ -112,5 +144,52 @@ export default {
             console.log("Destroying explosion");
             graphics.destroy();
         }, 3000);
+    },
+    setMap(map) {
+        var sprite = null;
+
+        for (var y = 0; y < map.length; y++) {
+            for (var x = 0; x < map[y].length; x++) {
+                if (this.map[y][x] !== 0) {
+                    this.map[y][x].destroy();
+                }
+                if (map[y][x] === 1) {
+                    sprite = PIXI.Sprite.from("wall");
+                }
+
+                if (sprite !== null) {
+                    sprite.x = x * TILE_SIZE;
+                    sprite.y = y * TILE_SIZE;
+                    sprite.width = TILE_SIZE;
+                    sprite.height = TILE_SIZE;
+                    sprite.type = map[y][x];
+
+                    this.map[y][x] = sprite;
+                    mainContainer.addChild(sprite);
+                }
+                sprite = null;
+            }
+        }
+    },
+    updateTile(x, y, tile) {
+        if (this.map[y][x] !== 0) {
+            if (this.map[y][x].type === tile) return;
+            this.map[y][x].destroy();
+        }
+        let sprite = null;
+        if (map[y][x] === 1) {
+            sprite = PIXI.Sprite.from("wall");
+        }
+
+        if (sprite !== null) {
+            sprite.x = x * TILE_SIZE;
+            sprite.y = y * TILE_SIZE;
+            sprite.width = TILE_SIZE;
+            sprite.height = TILE_SIZE;
+            sprite.type = tile;
+
+            this.map[y][x] = sprite;
+            mainContainer.addChild(sprite);
+        }
     }
 };

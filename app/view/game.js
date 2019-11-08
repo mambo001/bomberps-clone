@@ -2,6 +2,7 @@ import * as PIXI from "pixi.js";
 import keyboard from "./keyboard";
 import socketManager from "./socket";
 import gameState from "./gamestate";
+import Button from "./button";
 
 const app = new PIXI.Application({
     antialias: true,
@@ -27,21 +28,6 @@ app.loader.load((loader, resources) => {
 function init() {
     const mainContainer = new PIXI.Container();
 
-    var sprite;
-    for (var y = 0; y < MAP_TILE_HEIGHT; y++) {
-        for (var x = 0; x < MAP_TILE_WIDTH; x++) {
-            if (gameState.map[y][x] === 1) {
-                sprite = PIXI.Sprite.from("wall");
-                sprite.x = x * TILE_SIZE;
-                sprite.y = y * TILE_SIZE;
-                sprite.width = TILE_SIZE;
-                sprite.height = TILE_SIZE;
-                gameState.wallSprites.push(sprite);
-                mainContainer.addChild(sprite);
-                sprite = null;
-            }
-        }
-    }
     var up = keyboard("z"),
         down = keyboard("s"),
         left = keyboard("q"),
@@ -83,10 +69,22 @@ function init() {
         canBomb = true;
     };
 
-    app.stage.addChild(mainContainer);
+    socketManager.init(gameState);
+
+    var uiContainer = new PIXI.Container();
+    let playAsGuest = new Button(
+        "Jouer en tant qu'invité",
+        app.view.width / 2,
+        app.view.height / 2,
+        340,
+        75
+    );
+    playAsGuest.addToContainer(uiContainer);
+
+    app.stage.addChild(uiContainer);
+    console.log(playAsGuest);
 
     gameState.app = app;
+    gameState.uiContainer = uiContainer;
     gameState.mainContainer = mainContainer;
-
-    socketManager.init(gameState);
 }
