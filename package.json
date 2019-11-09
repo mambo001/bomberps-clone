@@ -7,6 +7,7 @@
     "license": "GPL-3.0-or-later",
     "scripts": {
         "build": "webpack --mode development",
+        "prod": "webpack --mode production",
         "start": "node app/entry.js"
     },
     "dependencies": {

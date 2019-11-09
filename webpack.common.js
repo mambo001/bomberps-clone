@@ -10,7 +10,6 @@ const MAP_TILE_HEIGHT = 13;
 const MAP_PIXEL_HEIGHT = MAP_TILE_HEIGHT * CLIENT_TILE_SIZE;
 
 module.exports = {
-    mode: "development",
     entry: {
         game: "./app/view/game.js"
     },
