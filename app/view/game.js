@@ -130,4 +130,14 @@ function init() {
     gameState.queueJoinBtn = queueJoinBtn;
     gameState.uiContainer = uiContainer;
     gameState.mainContainer = mainContainer;
+
+    gameState.playerContainer = new PIXI.Container();
+    gameState.effectContainer = new PIXI.Container();
+    gameState.bonusContainer = new PIXI.Container();
+    gameState.tileContainer = new PIXI.Container();
+
+    mainContainer.addChild(gameState.tileContainer);
+    mainContainer.addChild(gameState.bonusContainer);
+    mainContainer.addChild(gameState.effectContainer);
+    mainContainer.addChild(gameState.playerContainer);
 }

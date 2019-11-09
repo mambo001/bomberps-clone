@@ -12,6 +12,10 @@ export default {
     inGame: false,
     app: null,
     mainContainer: null,
+    playerContainer: null,
+    tileContainer: null,
+    bonusContainer: null,
+    effectContainer: null,
     uiContainer: null,
     hudContainer: null,
     connected: false,
@@ -68,8 +72,8 @@ export default {
     },
     addPlayer(id) {
         let player = new Player(id, "bomberman");
-        this.mainContainer.addChild(player.sprite);
-        this.mainContainer.addChild(player.nameText);
+        this.playerContainer.addChild(player.sprite);
+        this.playerContainer.addChild(player.nameText);
         this.players[id] = player;
         console.log("Added player ", player);
     },
@@ -81,7 +85,7 @@ export default {
         entity.width = 17 * (TILE_SIZE / 18);
         entity.height = TILE_SIZE;
         entity.anchor.set(0.5);
-        this.mainContainer.addChild(entity);
+        this.bonusContainer.addChild(entity);
         this.entities.push(entity);
     },
     updateEntity(id, x, y) {
@@ -94,7 +98,7 @@ export default {
     removeEntity(id) {
         for (let i = 0; i < this.entities.length; i++) {
             if (this.entities[i].eId === id) {
-                this.mainContainer.removeChild(this.entities[i]);
+                this.entities[i].destroy();
                 this.entities.splice(i, 1);
                 return;
             }
@@ -148,8 +152,9 @@ export default {
             );
         }
         graphics.endFill();
+        graphics.zIndex = 25;
 
-        this.app.stage.addChild(graphics);
+        this.effectContainer.addChild(graphics);
         setTimeout(() => {
             console.log("Destroying explosion");
             graphics.destroy();
@@ -197,10 +202,11 @@ export default {
                     sprite.y = y * TILE_SIZE;
                     sprite.width = TILE_SIZE;
                     sprite.height = TILE_SIZE;
+                    sprite.zIndex = 0;
                     sprite.type = map[y][x];
 
                     this.map[y][x] = sprite;
-                    this.mainContainer.addChild(sprite);
+                    this.tileContainer.addChild(sprite);
                 }
                 sprite = null;
             }
@@ -224,10 +230,11 @@ export default {
             sprite.y = y * TILE_SIZE;
             sprite.width = TILE_SIZE;
             sprite.height = TILE_SIZE;
+            sprite.zIndex = 0;
             sprite.type = tile;
 
             this.map[y][x] = sprite;
-            mainContainer.addChild(sprite);
+            this.tileContainer.addChild(sprite);
         }
     },
     addHUDText() {

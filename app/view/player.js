@@ -14,8 +14,11 @@ export default class Player {
         this.sprite.width = 16 * scale;
         this.sprite.height = 25 * scale;
         this.sprite.anchor.set(0.5);
+        this.sprite.zIndex = 50;
+
         this.nameText = new PIXI.Text(id, style);
         this.nameText.anchor.set(0.5);
+        this.nameText.zIndex = 100;
         this._x = 0;
         this._y = 0;
         this._visible = true;
