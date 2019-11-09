@@ -117,6 +117,7 @@ function init() {
     };
 
     gameState.hudContainer = new PIXI.Container();
+    gameState.zIndex = 999;
     app.stage.addChild(gameState.hudContainer);
 
     gameState.app = app;

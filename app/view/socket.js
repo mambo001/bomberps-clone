@@ -1,5 +1,4 @@
 import io from "socket.io-client";
-import Player from "./player";
 
 export default {
     init(gameState) {
@@ -68,10 +67,11 @@ export default {
         this.socket.on("player-update", arg => {
             this.gameState.players[arg.id].x = arg.pos.x;
             this.gameState.players[arg.id].y = arg.pos.y;
+            this.gameState.players[arg.id].visible = arg.visible;
         });
         this.socket.on("player-remove", ({ id }) => {
             let player = this.gameState.players[id];
-            this.gameState.mainContainer.removeChild(player.sprite);
+            player.destroy();
             delete this.gameState.players[id];
         });
         this.socket.on("entity-add", ({ id, texture, x, y }) => {
@@ -122,10 +122,10 @@ export default {
             this.gameState.queueJoinBtn.addToContainer(
                 this.gameState.uiContainer
             );
-            window.location.pathname = "/";
             this.gameState.connected = true;
             this.gameState.connectedAs = username;
             this.gameState.addHUDText();
+            history.pushState({}, "bomberps", "/");
         });
     }
 };

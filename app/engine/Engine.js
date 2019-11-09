@@ -89,12 +89,14 @@ class Engine {
             });
 
             socket.on("verify", async name => {
-                socket.userinfo = new UserInfo(name);
-                console.log("user is verified", socket.userinfo);
-                socket.verifyied = true;
-                socket.emit("connectedAs", {
-                    username: socket.userinfo.name
-                });
+                if (!socket.verifyied) {
+                    socket.userinfo = new UserInfo(name);
+                    console.log("user is verified", socket.userinfo);
+                    socket.verifyied = true;
+                    socket.emit("connectedAs", {
+                        username: socket.userinfo.name
+                    });
+                }
             });
 
             socket.on("disconnect", () => {

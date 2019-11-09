@@ -14,9 +14,21 @@ export default class Player {
         this.sprite.width = 16 * scale;
         this.sprite.height = 25 * scale;
         this.sprite.anchor.set(0.5);
-        this.debugText = new PIXI.Text("x = \ny = ", style);
+        this.nameText = new PIXI.Text(id, style);
+        this.nameText.anchor.set(0.5);
         this._x = 0;
         this._y = 0;
+        this._visible = true;
+    }
+
+    get visible() {
+        return this._visible;
+    }
+
+    set visible(v) {
+        this._visible = v;
+        this.sprite.visible = v;
+        this.nameText = v;
     }
 
     get x() {
@@ -29,19 +41,22 @@ export default class Player {
 
     set x(newX) {
         this._x = newX;
-        this.debugText.text = "x = " + newX + "\ny = " + this.y;
         this.sprite.x = newX * TILE_SIZE;
-        this.debugText.x = newX * TILE_SIZE;
+        this.nameText.x = newX * TILE_SIZE;
     }
 
     set y(newY) {
         this._y = newY;
         this.sprite.y = newY * TILE_SIZE;
-        this.debugText.y = newY * TILE_SIZE;
-        this.debugText.text = "x = " + this.x + "\ny = " + newY;
+        this.nameText.y = newY * TILE_SIZE - TILE_SIZE / 2;
     }
 
     get id() {
         return this._id;
+    }
+
+    destroy() {
+        this.sprite.destroy();
+        this.nameText.destroy();
     }
 }

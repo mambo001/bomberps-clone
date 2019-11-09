@@ -7,6 +7,8 @@ class Player extends Entity {
     constructor(socket) {
         super();
         this._socket = socket;
+        this.visible = true;
+        this.dead = false;
         this.speed = DEFAULT_PLAYER_SPEED;
         this.isDirty = false;
         this.displacementQueue = [];

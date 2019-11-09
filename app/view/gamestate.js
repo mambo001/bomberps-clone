@@ -1,6 +1,13 @@
 import Player from "./player";
 import * as PIXI from "pixi.js";
 
+let style = new PIXI.TextStyle({
+    fontFamily: "Arial",
+    fontSize: 24,
+    align: "center",
+    fill: 0xff0000
+});
+
 export default {
     inGame: false,
     app: null,
@@ -62,7 +69,7 @@ export default {
     addPlayer(id) {
         let player = new Player(id, "bomberman");
         this.mainContainer.addChild(player.sprite);
-        this.mainContainer.addChild(player.debugText);
+        this.mainContainer.addChild(player.nameText);
         this.players[id] = player;
         console.log("Added player ", player);
     },
@@ -197,9 +204,9 @@ export default {
     },
     addHUDText() {
         if (this.connected) {
-            let text = new PIXI.Text(this.connectedAs);
-            text.x = 5;
-            text.y = 5;
+            let text = new PIXI.Text("user: " + this.connectedAs, style);
+            text.x = 15;
+            text.y = 15;
             this.hudContainer.addChild(text);
         }
     }

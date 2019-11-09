@@ -43,7 +43,8 @@ class Party {
             if (player.isDirty) {
                 this.broadcast("player-update", {
                     id: player.id,
-                    pos: player.position
+                    pos: player.position,
+                    visible: player.visible
                 });
             }
         }
