@@ -56,18 +56,18 @@ export default {
         }
     },
     subscribe() {
-        this.socket.on("player-add", ({ id, pos }) => {
+        this.socket.on("player-add", ({ id, x, y }) => {
             this.gameState.addPlayer(id);
-            console.log("event player-add ", id, pos);
-            if (typeof pos !== "undefined") {
-                this.gameState.players[id].x = pos.x;
-                this.gameState.players[id].y = pos.y;
+            console.log("event player-add ", id, x, y);
+            if (typeof x !== "undefined" && typeof y !== "undefined") {
+                this.gameState.players[id].x = x;
+                this.gameState.players[id].y = y;
             }
         });
-        this.socket.on("player-update", arg => {
-            this.gameState.players[arg.id].x = arg.pos.x;
-            this.gameState.players[arg.id].y = arg.pos.y;
-            this.gameState.players[arg.id].visible = arg.visible;
+        this.socket.on("player-update", ({ id, x, y, visible }) => {
+            this.gameState.players[id].x = x;
+            this.gameState.players[id].y = y;
+            this.gameState.players[id].visible = visible;
         });
         this.socket.on("player-remove", ({ id }) => {
             let player = this.gameState.players[id];
@@ -112,6 +112,12 @@ export default {
         this.socket.on("map-set", map => {
             if (!this.gameState.inGame) return;
             this.gameState.setMap(map);
+        });
+
+        this.socket.on("tile-set", ({ x, y, tile }) => {
+            if (!this.gameState.inGame) return;
+            console.log("Updating tile at x=%i y=%i", x, y);
+            this.gameState.updateTile(x, y, tile);
         });
 
         this.socket.on("connectedAs", ({ username }) => {

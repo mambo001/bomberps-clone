@@ -156,6 +156,28 @@ export default {
         }, 3000);
     },
     setMap(map) {
+        for (let y = 0; y < this.map.length; y++) {
+            for (let x = 0; x < this.map[y].length; x++) {
+                if (this.map[y][x] !== 0) {
+                    this.map[y][x].destroy();
+                }
+            }
+        }
+        this.map = [
+            [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+            [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+            [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+            [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+            [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+            [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+            [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+            [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+            [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+            [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+            [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+            [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+            [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+        ];
         var sprite = null;
 
         for (var y = 0; y < map.length; y++) {
@@ -165,6 +187,9 @@ export default {
                 }
                 if (map[y][x] === 1) {
                     sprite = PIXI.Sprite.from("wall");
+                }
+                if (map[y][x] === 2) {
+                    sprite = PIXI.Sprite.from("obstacle");
                 }
 
                 if (sprite !== null) {
@@ -187,7 +212,10 @@ export default {
             this.map[y][x].destroy();
         }
         let sprite = null;
-        if (map[y][x] === 1) {
+        if (tile === 0) {
+            this.map[y][x] = 0;
+        }
+        if (tile === 1) {
             sprite = PIXI.Sprite.from("wall");
         }
 

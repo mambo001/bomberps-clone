@@ -33,7 +33,12 @@ function init() {
         down = keyboard("s"),
         left = keyboard("q"),
         right = keyboard("d"),
-        bomb = keyboard(" ");
+        bomb = keyboard(" "),
+        debugReset = keyboard("r");
+
+    debugReset.press = () => {
+        socketManager.socket.emit("debug-reset");
+    };
 
     up.press = () => {
         socketManager.sendInput("up", true);

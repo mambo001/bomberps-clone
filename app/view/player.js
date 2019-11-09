@@ -28,7 +28,7 @@ export default class Player {
     set visible(v) {
         this._visible = v;
         this.sprite.visible = v;
-        this.nameText = v;
+        this.nameText.visible = v;
     }
 
     get x() {

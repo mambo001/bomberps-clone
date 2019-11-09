@@ -14,7 +14,7 @@ class Party {
         this.lastUpdateTime = hrtimeMs;
         this._handle = setInterval(() => this.loop(), 1000 / 60);
 
-        this.level = new Level();
+        this.level = new Level(this);
     }
 
     get id() {
@@ -43,9 +43,11 @@ class Party {
             if (player.isDirty) {
                 this.broadcast("player-update", {
                     id: player.id,
-                    pos: player.position,
+                    x: player.x,
+                    y: player.y,
                     visible: player.visible
                 });
+                player.isDirty = false;
             }
         }
     }
@@ -60,44 +62,52 @@ class Party {
     }
 
     createExplosion(x, y, radius) {
-        // Explode tiles at right
-        for (let i = 0; i < radius; i++) {
-            if (x + i > 15) break;
-            if (this.level.isTileBlocked(x + i, y)) {
-                break;
-            }
-            this.level.explodeTile(x + i, y);
-        }
-        // Explode tiles at left
-        for (let i = 0; i < radius; i++) {
-            if (x - i < 0) break;
-            if (this.level.isTileBlocked(x - i, y)) {
-                break;
-            }
-            this.level.explodeTile(x - i, y);
-        }
-        // Explode up tiles
-        for (let i = 0; i < radius; i++) {
-            if (y - i < 0) break;
-            if (this.level.isTileBlocked(x, y - i)) {
-                break;
-            }
-            this.level.explodeTile(x, y - i);
-        }
-        // Explode down tiles
-        for (let i = 0; i < radius; i++) {
-            if (y + i > 13) break;
-            if (this.level.isTileBlocked(x, y + i)) {
-                break;
-            }
-            this.level.explodeTile(x, y + i);
-        }
         this.broadcast("effect", {
             type: "explosion",
             x: x,
             y: y,
             radius: radius
         });
+
+        if (radius !== 0) {
+            this.level.explodeTile(x, y);
+        }
+        // Explode tiles at right
+        for (let i = 1; i < radius; i++) {
+            if (x + i > 15) break;
+            if (this.level.isTileBlocked(x + i, y)) {
+                this.level.explodeTile(x + i, y);
+                break;
+            }
+            this.level.explodeTile(x + i, y);
+        }
+        // Explode tiles at left
+        for (let i = 1; i < radius; i++) {
+            if (x - i < 0) break;
+            if (this.level.isTileBlocked(x - i, y)) {
+                this.level.explodeTile(x - i, y);
+                break;
+            }
+            this.level.explodeTile(x - i, y);
+        }
+        // Explode up tiles
+        for (let i = 1; i < radius; i++) {
+            if (y - i < 0) break;
+            if (this.level.isTileBlocked(x, y - i)) {
+                this.level.explodeTile(x, y - i);
+                break;
+            }
+            this.level.explodeTile(x, y - i);
+        }
+        // Explode down tiles
+        for (let i = 1; i < radius; i++) {
+            if (y + i > 13) break;
+            if (this.level.isTileBlocked(x, y + i)) {
+                this.level.explodeTile(x, y + i);
+                break;
+            }
+            this.level.explodeTile(x, y + i);
+        }
     }
 
     broadcast(eventName, arg) {
@@ -117,7 +127,8 @@ class Party {
         for (const p of this.level.players) {
             player.socket.emit("player-add", {
                 id: p.id,
-                pos: p.position
+                x: p.x,
+                y: p.y
             });
         }
         for (const bomb of this.level.bombs) {
@@ -169,6 +180,25 @@ class Party {
 
     dispose() {
         clearInterval(this._handle);
+    }
+
+    _resetMap() {
+        this.level.tiles = [
+            [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
+            [1, 0, 0, 2, 2, 2, 2, 2, 2, 2, 2, 2, 0, 0, 1],
+            [1, 0, 1, 2, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1],
+            [1, 2, 2, 0, 0, 0, 0, 0, 0, 0, 0, 2, 0, 2, 1],
+            [1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1],
+            [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
+            [1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1],
+            [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
+            [1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1],
+            [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
+            [1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1],
+            [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
+            [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1]
+        ];
+        this.broadcast("map-set", this.level.tiles);
     }
 }
 

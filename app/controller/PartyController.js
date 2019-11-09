@@ -49,7 +49,8 @@ class PartyController extends Controller {
 
         party.broadcast("player-add", {
             id: player.id,
-            pos: player.position
+            x: player.x,
+            y: player.y
         });
     }
 }

@@ -1,17 +1,18 @@
 const Bomb = require("./Bomb");
 
 class Level {
-    constructor() {
+    constructor(party) {
+        this._party = party;
         this.tiles = [
             [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
+            [1, 0, 0, 2, 2, 2, 2, 2, 2, 2, 2, 2, 0, 0, 1],
+            [1, 0, 1, 2, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1],
+            [1, 2, 2, 0, 0, 0, 0, 0, 0, 0, 0, 2, 0, 2, 1],
+            [1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1],
             [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
             [1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1],
             [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
-            [1, 0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 1],
-            [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
-            [1, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 1],
-            [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
-            [1, 0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 1],
+            [1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1],
             [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
             [1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1],
             [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
@@ -42,16 +43,25 @@ class Level {
     }
 
     explodeTile(x, y) {
+        console.log("exploding tile x=%i y=%i", x, y);
         for (const player of this.players) {
             if (player.tileX == x && player.tileY == y) {
                 // TODO : player dies
             }
         }
         // Destroy adjacent obstacles if they exists
-        if (this.tiles[x][y + 1] == 2) this.setTile(x, y + 1, 0);
-        if (this.tiles[x][y - 1] == 2) this.setTile(x, y - 1, 0);
-        if (this.tiles[x - 1][y] == 2) this.setTile(x - 1, y, 0);
-        if (this.tiles[x + 1][y] == 2) this.setTile(x + 1, y, 0);
+        if (this.tiles[y][x] === 2) {
+            this.setTile(x, y, 0);
+        }
+    }
+
+    setTile(x, y, tile) {
+        this.tiles[y][x] = tile;
+        this._party.broadcast("tile-set", {
+            x: x,
+            y: y,
+            tile: tile
+        });
     }
 
     addBomb(player) {

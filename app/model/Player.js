@@ -40,13 +40,6 @@ class Player extends Entity {
         return this.currentCooldown === 0;
     }
 
-    get position() {
-        return {
-            x: this.x,
-            y: this.y
-        };
-    }
-
     get id() {
         return this._socket.userinfo.name;
     }
