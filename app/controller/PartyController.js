@@ -7,22 +7,27 @@ class PartyController extends Controller {
     constructor(engine) {
         super("party", engine);
         this._partyList = [];
-        this._partyCount = 0;
     }
 
     createNewParty() {
-        if (this._partyCount >= MAX_PARTY_NUMBER) {
+        if (this.partyCount >= MAX_PARTY_NUMBER) {
             console.log("Reached party count limit");
             return;
         }
-        let party = new Party(nextId++);
+        let party = new Party(nextId++, this);
         this._partyList.push(party);
-        this._partyCount;
         return party;
     }
 
+    endParty(party) {
+        for (const player of party.level.players) {
+            player.socket.userinfo.isInParty = false;
+        }
+        this.removeParty(party);
+    }
+
     removeParty(party) {
-        for (let i = 0; i < this._partyCount; i++) {
+        for (let i = 0; i < this.partyCount; i++) {
             if (this._partyList[i].id === party.id) {
                 party.dispose();
                 this._partyList.splice(i, 1);
@@ -50,7 +55,7 @@ class PartyController extends Controller {
             );
             return;
         }
-        let party = this._partyList[partyId];
+        let party = this.getPartyFromId(partyId);
         let player = party.addPlayer(socket);
         socket.userinfo.isInParty = true;
         socket.partyId = partyId;
@@ -58,6 +63,10 @@ class PartyController extends Controller {
 
         socket.emit("join-game");
         socket.emit("map-set", party.level.tiles);
+    }
+
+    get partyCount() {
+        return this._partyList.length;
     }
 }
 

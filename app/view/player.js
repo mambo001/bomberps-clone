@@ -19,6 +19,7 @@ export default class Player extends PIXI.Container {
 
         this._nameText = new PIXI.Text(id, style);
         this._nameText.anchor.set(0.5);
+        this._nameText.y -= 35;
         this._nameText.zIndex = 100;
 
         this._visible = true;

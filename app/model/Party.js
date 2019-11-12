@@ -22,14 +22,17 @@ const getSpawnLoc = function(spawn) {
     }
 };
 class Party {
-    constructor(id) {
+    constructor(id, controller) {
         this._id = id;
+        this._partyController = controller;
+
         this.lastUpdateTime = hrtimeMs;
         this._handle = setInterval(() => this.loop(), 1000 / 60);
 
         this.availableSpawns = [true, true, true, true];
 
         this.level = new Level(this);
+        this.runningPlayers = []; // Array containing players that still have lives
     }
 
     get id() {
@@ -46,7 +49,7 @@ class Party {
             bomb = this.level.bombs[i];
             bomb.update(delta);
             if (bomb.mustExplode) {
-                this.createExplosion(bomb.tileX, bomb.tileY, 3);
+                this.createExplosion(bomb.tileX, bomb.tileY, 3, bomb.player);
                 this.removeBomb(bomb);
             }
         }
@@ -77,7 +80,7 @@ class Party {
         this.lastUpdateTime = currentTime;
     }
 
-    createExplosion(x, y, radius) {
+    createExplosion(x, y, radius, caster) {
         this.broadcast("effect", {
             type: "explosion",
             x: x,
@@ -86,43 +89,43 @@ class Party {
         });
 
         if (radius !== 0) {
-            this.level.explodeTile(x, y);
+            this.level.explodeTile(x, y, caster);
         }
         // Explode tiles at right
         for (let i = 1; i < radius; i++) {
             if (x + i > 15) break;
             if (this.level.isTileBlocked(x + i, y)) {
-                this.level.explodeTile(x + i, y);
+                this.level.explodeTile(x + i, y, caster);
                 break;
             }
-            this.level.explodeTile(x + i, y);
+            this.level.explodeTile(x + i, y, caster);
         }
         // Explode tiles at left
         for (let i = 1; i < radius; i++) {
             if (x - i < 0) break;
             if (this.level.isTileBlocked(x - i, y)) {
-                this.level.explodeTile(x - i, y);
+                this.level.explodeTile(x - i, y, caster);
                 break;
             }
-            this.level.explodeTile(x - i, y);
+            this.level.explodeTile(x - i, y, caster);
         }
         // Explode up tiles
         for (let i = 1; i < radius; i++) {
             if (y - i < 0) break;
             if (this.level.isTileBlocked(x, y - i)) {
-                this.level.explodeTile(x, y - i);
+                this.level.explodeTile(x, y - i, caster);
                 break;
             }
-            this.level.explodeTile(x, y - i);
+            this.level.explodeTile(x, y - i, caster);
         }
         // Explode down tiles
         for (let i = 1; i < radius; i++) {
             if (y + i > 13) break;
             if (this.level.isTileBlocked(x, y + i)) {
-                this.level.explodeTile(x, y + i);
+                this.level.explodeTile(x, y + i, caster);
                 break;
             }
-            this.level.explodeTile(x, y + i);
+            this.level.explodeTile(x, y + i, caster);
         }
     }
 
@@ -139,6 +142,7 @@ class Party {
         }
         let player = new Player(socket);
         player.subscribe(this);
+        this.runningPlayers.push(player);
         let spawnPos;
         for (let i = 0; i < this.availableSpawns.length; i++) {
             if (this.availableSpawns[i]) {
@@ -195,10 +199,19 @@ class Party {
     }
 
     killPlayer(player) {
+        if (player.lives < 0) return;
         player.dead = true;
         player.visible = false;
         player.lives--;
-        player.spawnCooldown = 3.5;
+        if (player.lives < 0) {
+            this.runningPlayers.splice(this.runningPlayers.indexOf(player), 1);
+            // if there is only one remaining player, we end the game
+            if (this.runningPlayers.length === 1) {
+                this.end();
+            }
+        } else {
+            player.spawnCooldown = 3.5;
+        }
 
         this.broadcast("player-update", {
             id: player.id,
@@ -233,6 +246,9 @@ class Party {
                 "Player %s is leaving the party.",
                 this.level.players[index].id
             );
+            this.level.players[index].lives = 0;
+            this.killPlayer(this.level.players[index]);
+
             this.availableSpawns[this.level.players[index].spawnIndex] = true;
             this.broadcast("player-remove", {
                 id: this.level.players[index].id
@@ -240,6 +256,23 @@ class Party {
             this.level.players[index].unsubscribe();
             this.level.players.splice(index, 1);
         }
+    }
+
+    end() {
+        let scoreArray = [];
+        for (const player of this.level.players) {
+            scoreArray.push({
+                id: player.id,
+                score: player.score
+            });
+        }
+        scoreArray.sort((a, b) => {
+            return b.score - a.score;
+        });
+        this.broadcast("end-game", {
+            scores: scoreArray
+        });
+        this._partyController.endParty(this);
     }
 
     dispose() {

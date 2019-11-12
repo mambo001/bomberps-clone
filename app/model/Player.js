@@ -13,6 +13,8 @@ class Player extends Entity {
         this.lives = 3;
         this.spawnCooldown = 0;
 
+        this.score = 0;
+
         this.speed = DEFAULT_PLAYER_SPEED;
         this.isDirty = false;
         this.displacementQueue = [];

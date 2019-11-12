@@ -5,8 +5,8 @@ import GameState from "./gamestate";
 import GameScreen from "./screens/GameScreen";
 import LoginScreen from "./screens/LoginScreen";
 import MainMenuScreen from "./screens/MainMenuScreen";
-import gameInfoHUD from "./screens/GameInfoHUD";
 import GameInfoHUD from "./screens/GameInfoHUD";
+import EndGameScreen from "./screens/EndGameScreen";
 
 const app = new PIXI.Application({
     antialias: true,
@@ -90,6 +90,7 @@ function init() {
     gameState.screens.login = new LoginScreen(gameState, socketManager);
     gameState.screens.mainMenu = new MainMenuScreen(gameState, socketManager);
     gameState.screens.ingame = new GameScreen(gameState, socketManager);
+    gameState.screens.endGame = new EndGameScreen(gameState, socketManager);
 
     gameState.setScreen("login");
 }

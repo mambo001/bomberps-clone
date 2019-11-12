@@ -42,9 +42,12 @@ class Level {
         return this._bombs;
     }
 
-    explodeTile(x, y) {
+    explodeTile(x, y, caster) {
         console.log("exploding tile x=%i y=%i", x, y);
         for (const player of this.players) {
+            if (player.id !== caster.id) {
+                caster.score++;
+            }
             if (player.tileX == x && player.tileY == y) {
                 this._party.killPlayer(player);
             }
@@ -115,6 +118,7 @@ class Level {
     isTileBlockedByOtherPlayer(except, x, y) {
         for (const player of this.players) {
             if (
+                !player.dead &&
                 player.id !== except.id &&
                 player.tileX === x &&
                 player.tileY === y

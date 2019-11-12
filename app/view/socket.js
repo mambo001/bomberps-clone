@@ -123,6 +123,10 @@ export default {
                 this.gameState.resetStage();
             }
         });
+        this.socket.on("end-game", ({ scores }) => {
+            this.gameState.scores = scores;
+            this.gameState.setScreen("endGame");
+        });
         this.socket.on("map-set", map => {
             if (!this.gameState.inGame) return;
             this.gameState.setMap(map);
