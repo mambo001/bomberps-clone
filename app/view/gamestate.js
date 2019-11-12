@@ -14,11 +14,11 @@ export default class GameState {
         this.app = null;
         this.mainContainer = null;
         this.playerContainer = null;
-        this.tileContaine = null;
-        this.bonusContaine = null;
-        this.effectContaine = null;
-        this.uiContaine = null;
-        this.hudContaine = null;
+        this.tileContainer = null;
+        this.bonusContainer = null;
+        this.effectContainer = null;
+        this.uiContainer = null;
+        this.hudContainer = null;
         this.connected = false;
         this.map = [
             [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
