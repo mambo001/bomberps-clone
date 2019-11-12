@@ -7,59 +7,48 @@ const style = new PIXI.TextStyle({
     wordWrap: true
 });
 
-export default class Player {
+export default class Player extends PIXI.Container {
     constructor(id, texture) {
+        super();
         this._id = id;
-        this.sprite = PIXI.Sprite.from(texture);
-        this.sprite.width = 16 * scale;
-        this.sprite.height = 25 * scale;
-        this.sprite.anchor.set(0.5);
-        this.sprite.zIndex = 50;
+        this._sprite = PIXI.Sprite.from(texture);
+        this._sprite.width = 16 * scale;
+        this._sprite.height = 25 * scale;
+        this._sprite.anchor.set(0.5);
+        this._sprite.zIndex = 50;
 
-        this.nameText = new PIXI.Text(id, style);
-        this.nameText.anchor.set(0.5);
-        this.nameText.zIndex = 100;
-        this._x = 0;
-        this._y = 0;
+        this._nameText = new PIXI.Text(id, style);
+        this._nameText.anchor.set(0.5);
+        this._nameText.zIndex = 100;
+
         this._visible = true;
-    }
 
-    get visible() {
-        return this._visible;
-    }
+        this.speed = 3;
+        this.direction = "none";
+        this.moving = false;
 
-    set visible(v) {
-        this._visible = v;
-        this.sprite.visible = v;
-        this.nameText.visible = v;
-    }
-
-    get x() {
-        return this._x;
-    }
-
-    get y() {
-        return this._y;
-    }
-
-    set x(newX) {
-        this._x = newX;
-        this.sprite.x = newX * TILE_SIZE;
-        this.nameText.x = newX * TILE_SIZE;
-    }
-
-    set y(newY) {
-        this._y = newY;
-        this.sprite.y = newY * TILE_SIZE;
-        this.nameText.y = newY * TILE_SIZE - TILE_SIZE / 2;
+        this.addChild(this._sprite);
+        this.addChild(this._nameText);
     }
 
     get id() {
         return this._id;
     }
 
-    destroy() {
-        this.sprite.destroy();
-        this.nameText.destroy();
+    setPos(x, y) {
+        this.x = x * TILE_SIZE;
+        this.y = y * TILE_SIZE;
+    }
+
+    setSpeed(speed) {
+        this.speed = speed;
+    }
+
+    setMoving(moving) {
+        this.moving = moving;
+    }
+
+    setDirection(dir) {
+        this.direction = dir;
     }
 }

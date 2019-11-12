@@ -1,15 +1,16 @@
 import * as PIXI from "pixi.js";
 import keyboard from "./keyboard";
 import socketManager from "./socket";
-import gameState from "./gamestate";
+import GameState from "./gamestate";
 import Button from "./button";
-import socket from "./socket";
 
 const app = new PIXI.Application({
     antialias: true,
     width: MAP_PIXEL_WIDTH,
     height: MAP_PIXEL_HEIGHT
 });
+
+const gameState = new GameState(app);
 
 // The application will create a canvas element for you that you
 // can then insert into the DOM

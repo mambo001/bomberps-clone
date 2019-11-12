@@ -124,15 +124,9 @@ class Level {
         return false;
     }
 
-    spawnPlayer(player) {
-        player.visible = true;
-        player.x = player.spawnX + 0.5;
-        player.y = player.spawnY + 0.5;
-    }
-
     updatePlayer(delta, player) {
         if (player.dead && player.lives > 0 && player.spawnCooldown === 0) {
-            this.spawnPlayer(player);
+            this._party.spawnPlayer(player);
             player.dead = false;
         }
         if (player.dead) return;
@@ -177,6 +171,7 @@ class Level {
                 nextPos.tileX = Math.floor(nextPos.x);
                 nextPos.tileY = Math.floor(nextPos.y);
 
+                // Case moving up
                 if (player.currentDisplacement === "up") {
                     nextPos.y -= player.speed * delta;
                     nextPos.tileY = Math.floor(nextPos.y);
@@ -337,8 +332,6 @@ class Level {
                     player.moving = false;
                 }
             }
-
-            player.isDirty = true;
         }
     }
 }

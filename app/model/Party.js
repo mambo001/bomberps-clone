@@ -60,7 +60,8 @@ class Party {
                     id: player.id,
                     x: player.x,
                     y: player.y,
-                    props: { visible: player.visible }
+                    moving: player.moving,
+                    direction: player.currentDisplacement
                 });
                 player.isDirty = false;
             }
@@ -143,19 +144,21 @@ class Party {
             if (this.availableSpawns[i]) {
                 spawnPos = getSpawnLoc(i);
                 this.availableSpawns[i] = false;
+                player.spawnIndex = i;
                 break;
             }
         }
         player.spawnX = spawnPos.x;
         player.spawnY = spawnPos.y;
 
-        this.level.spawnPlayer(player);
+        this.spawnPlayer(player);
 
         for (const p of this.level.players) {
             player.socket.emit("player-add", {
                 id: p.id,
                 x: p.x,
-                y: p.y
+                y: p.y,
+                speed: p.speed
             });
         }
         for (const bomb of this.level.bombs) {
@@ -167,21 +170,39 @@ class Party {
             });
         }
         this.level.players.push(player);
+        this.broadcast("player-add", {
+            id: player.id,
+            x: player.x,
+            y: player.y,
+            speed: player.speed
+        });
         return player;
+    }
+
+    spawnPlayer(player) {
+        player.visible = true;
+        player.x = player.spawnX + 0.5;
+        player.y = player.spawnY + 0.5;
+        this.broadcast("player-update", {
+            id: player.id,
+            x: player.x,
+            y: player.y
+        });
+        this.broadcast("player-update", {
+            id: player.id,
+            visible: player.visible
+        });
     }
 
     killPlayer(player) {
         player.dead = true;
+        player.visible = false;
         player.lives--;
         player.spawnCooldown = 3.5;
 
         this.broadcast("player-update", {
             id: player.id,
-            x: 0,
-            y: 0,
-            props: {
-                visible: false
-            }
+            visible: player.visible
         });
     }
 
@@ -212,6 +233,7 @@ class Party {
                 "Player %s is leaving the party.",
                 this.level.players[index].id
             );
+            this.availableSpawns[this.level.players[index].spawnIndex] = true;
             this.broadcast("player-remove", {
                 id: this.level.players[index].id
             });

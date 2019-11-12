@@ -56,25 +56,36 @@ export default {
         }
     },
     subscribe() {
-        this.socket.on("player-add", ({ id, x, y }) => {
+        this.socket.on("player-add", ({ id, x, y, speed }) => {
             this.gameState.addPlayer(id);
             console.log("event player-add ", id, x, y);
             if (typeof x !== "undefined" && typeof y !== "undefined") {
-                this.gameState.players[id].x = x;
-                this.gameState.players[id].y = y;
+                this.gameState.players[id].setPos(x, y);
+            }
+            if (typeof speed !== "undefined") {
+                this.gameState.players[id].speed = speed;
             }
         });
-        this.socket.on("player-update", ({ id, x, y, props }) => {
-            this.gameState.players[id].x = x;
-            this.gameState.players[id].y = y;
-            if (typeof props !== "undefined") {
-                for (var prop in props) {
-                    if (props.hasOwnProperty(prop)) {
-                        this.gameState.players[id][prop] = props[prop];
-                    }
+        this.socket.on(
+            "player-update",
+            ({ id, x, y, speed, visible, moving, direction }) => {
+                if (typeof x !== "undefined" && typeof y !== "undefined") {
+                    this.gameState.players[id].setPos(x, y);
+                }
+                if (typeof speed !== "undefined") {
+                    this.gameState.players[id].speed = speed;
+                }
+                if (typeof moving !== "undefined") {
+                    this.gameState.players[id].moving = moving;
+                }
+                if (typeof direction !== "undefined") {
+                    this.gameState.players[id].direction = direction;
+                }
+                if (typeof visible !== "undefined") {
+                    this.gameState.players[id].visible = visible;
                 }
             }
-        });
+        );
         this.socket.on("player-remove", ({ id }) => {
             let player = this.gameState.players[id];
             player.destroy();

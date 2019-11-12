@@ -21,7 +21,7 @@ class Player extends Entity {
             x: -1,
             y: -1
         };
-        this.moving = false;
+        this._moving = false;
         this.size = DEFAULT_PLAYER_SIZE;
 
         this.spawnX = 3;
@@ -67,6 +67,15 @@ class Player extends Entity {
 
     startBombCooldown() {
         this.currentCooldown = this.bombCooldown;
+    }
+
+    get moving() {
+        return this._moving;
+    }
+
+    set moving(m) {
+        if (m !== this.moving) this.isDirty = true;
+        this._moving = m;
     }
 
     bomb(party) {

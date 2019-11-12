@@ -8,36 +8,65 @@ let style = new PIXI.TextStyle({
     fill: 0xff0000
 });
 
-export default {
-    inGame: false,
-    app: null,
-    mainContainer: null,
-    playerContainer: null,
-    tileContainer: null,
-    bonusContainer: null,
-    effectContainer: null,
-    uiContainer: null,
-    hudContainer: null,
-    connected: false,
-    map: [
-        [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-        [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-        [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-        [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-        [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-        [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-        [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-        [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-        [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-        [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-        [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-        [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-        [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
-    ],
-    wallSprites: [],
-    players: {},
-    entities: [],
-    effects: [],
+export default class GameState {
+    constructor(app) {
+        this.inGame = false;
+        this.app = null;
+        this.mainContainer = null;
+        this.playerContainer = null;
+        this.tileContaine = null;
+        this.bonusContaine = null;
+        this.effectContaine = null;
+        this.uiContaine = null;
+        this.hudContaine = null;
+        this.connecte = false;
+        this.map = [
+            [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+            [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+            [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+            [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+            [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+            [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+            [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+            [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+            [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+            [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+            [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+            [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+            [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+        ];
+        this.wallSprites = [];
+        this.players = {};
+        this.entities = [];
+        this.effects = [];
+
+        app.ticker.add(delta => {
+            this.update(delta);
+        });
+    }
+
+    update(delta) {
+        let player;
+
+        for (const playerId in this.players) {
+            player = this.players[playerId];
+
+            if (player.moving) {
+                if (player.direction === "up") {
+                    player.y -= player.speed * delta;
+                }
+                if (player.direction === "down") {
+                    player.y += player.speed * delta;
+                }
+                if (player.direction === "left") {
+                    player.x -= player.speed * delta;
+                }
+                if (player.direction === "right") {
+                    player.x += player.speed * delta;
+                }
+            }
+        }
+    }
     resetStage() {
         for (let y = 0; y < this.map.length; y++) {
             for (let x = 0; x < this.map[y].length; x++) {
@@ -69,14 +98,13 @@ export default {
         ];
         this.entities = [];
         this.players = [];
-    },
+    }
     addPlayer(id) {
         let player = new Player(id, "bomberman");
-        this.playerContainer.addChild(player.sprite);
-        this.playerContainer.addChild(player.nameText);
+        this.playerContainer.addChild(player);
         this.players[id] = player;
         console.log("Added player ", player);
-    },
+    }
     addEntity(id, texture, x, y) {
         let entity = PIXI.Sprite.from(texture);
         entity.eId = id;
@@ -87,14 +115,14 @@ export default {
         entity.anchor.set(0.5);
         this.bonusContainer.addChild(entity);
         this.entities.push(entity);
-    },
+    }
     updateEntity(id, x, y) {
         let entity = this.bombs.find(x => {
             return x.eId === id;
         });
         entity.x = x * TILE_SIZE;
         entity.y = y * TILE_SIZE;
-    },
+    }
     removeEntity(id) {
         for (let i = 0; i < this.entities.length; i++) {
             if (this.entities[i].eId === id) {
@@ -103,7 +131,7 @@ export default {
                 return;
             }
         }
-    },
+    }
     createExplosion(x, y, radius) {
         const graphics = new PIXI.Graphics();
         graphics.beginFill(0xff0000, 0.6);
@@ -159,7 +187,7 @@ export default {
             console.log("Destroying explosion");
             graphics.destroy();
         }, 3000);
-    },
+    }
     setMap(map) {
         for (let y = 0; y < this.map.length; y++) {
             for (let x = 0; x < this.map[y].length; x++) {
@@ -211,7 +239,7 @@ export default {
                 sprite = null;
             }
         }
-    },
+    }
     updateTile(x, y, tile) {
         if (this.map[y][x] !== 0) {
             if (this.map[y][x].type === tile) return;
@@ -236,7 +264,7 @@ export default {
             this.map[y][x] = sprite;
             this.tileContainer.addChild(sprite);
         }
-    },
+    }
     addHUDText() {
         if (this.connected) {
             let text = new PIXI.Text("user: " + this.connectedAs, style);
@@ -245,4 +273,4 @@ export default {
             this.hudContainer.addChild(text);
         }
     }
-};
+}
