@@ -64,10 +64,16 @@ export default {
                 this.gameState.players[id].y = y;
             }
         });
-        this.socket.on("player-update", ({ id, x, y, visible }) => {
+        this.socket.on("player-update", ({ id, x, y, props }) => {
             this.gameState.players[id].x = x;
             this.gameState.players[id].y = y;
-            this.gameState.players[id].visible = visible;
+            if (typeof props !== "undefined") {
+                for (var prop in props) {
+                    if (props.hasOwnProperty(prop)) {
+                        this.gameState.players[id][prop] = props[prop];
+                    }
+                }
+            }
         });
         this.socket.on("player-remove", ({ id }) => {
             let player = this.gameState.players[id];

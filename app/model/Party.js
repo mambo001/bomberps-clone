@@ -8,11 +8,26 @@ const hrtimeMs = function() {
     let time = process.hrtime();
     return time[0] * 1000 + time[1] / 1000000;
 };
+
+const getSpawnLoc = function(spawn) {
+    switch (spawn) {
+        case 0:
+            return { x: 1, y: 1 };
+        case 1:
+            return { x: 13, y: 1 };
+        case 2:
+            return { x: 13, y: 11 };
+        case 3:
+            return { x: 1, y: 11 };
+    }
+};
 class Party {
     constructor(id) {
         this._id = id;
         this.lastUpdateTime = hrtimeMs;
         this._handle = setInterval(() => this.loop(), 1000 / 60);
+
+        this.availableSpawns = [true, true, true, true];
 
         this.level = new Level(this);
     }
@@ -45,7 +60,7 @@ class Party {
                     id: player.id,
                     x: player.x,
                     y: player.y,
-                    visible: player.visible
+                    props: { visible: player.visible }
                 });
                 player.isDirty = false;
             }
@@ -123,6 +138,18 @@ class Party {
         }
         let player = new Player(socket);
         player.subscribe(this);
+        let spawnPos;
+        for (let i = 0; i < this.availableSpawns.length; i++) {
+            if (this.availableSpawns[i]) {
+                spawnPos = getSpawnLoc(i);
+                this.availableSpawns[i] = false;
+                break;
+            }
+        }
+        player.spawnX = spawnPos.x;
+        player.spawnY = spawnPos.y;
+
+        this.level.spawnPlayer(player);
 
         for (const p of this.level.players) {
             player.socket.emit("player-add", {
@@ -141,6 +168,21 @@ class Party {
         }
         this.level.players.push(player);
         return player;
+    }
+
+    killPlayer(player) {
+        player.dead = true;
+        player.lives--;
+        player.spawnCooldown = 3.5;
+
+        this.broadcast("player-update", {
+            id: player.id,
+            x: 0,
+            y: 0,
+            props: {
+                visible: false
+            }
+        });
     }
 
     poseBomb(player) {

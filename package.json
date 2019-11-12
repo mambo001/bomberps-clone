@@ -6,11 +6,11 @@
     "author": "Zetsyog <zetsyog@gmail.com>",
     "license": "GPL-3.0-or-later",
     "engines": {
-        "node": "10.16"
+        "node": ">=10.16"
     },
     "scripts": {
         "build": "webpack --config webpack.prod.js",
-        "dev": "webpack --config webpack.prod.js",
+        "dev": "webpack --config webpack.dev.js",
         "start": "node app/entry.js"
     },
     "dependencies": {

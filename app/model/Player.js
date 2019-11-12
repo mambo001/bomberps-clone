@@ -8,7 +8,11 @@ class Player extends Entity {
         super();
         this._socket = socket;
         this.visible = true;
+
         this.dead = false;
+        this.lives = 3;
+        this.spawnCooldown = 0;
+
         this.speed = DEFAULT_PLAYER_SPEED;
         this.isDirty = false;
         this.displacementQueue = [];
@@ -20,8 +24,8 @@ class Player extends Entity {
         this.moving = false;
         this.size = DEFAULT_PLAYER_SIZE;
 
-        this.x = 3.5;
-        this.y = 6.5;
+        this.spawnX = 3;
+        this.spawnY = 6;
 
         this.bombCooldown = 2.5;
         this.currentCooldown = 0;
@@ -33,6 +37,13 @@ class Player extends Entity {
         }
         if (this.currentCooldown < 0) {
             this.currentCooldown = 0;
+        }
+
+        if (this.spawnCooldown > 0) {
+            this.spawnCooldown -= delta;
+        }
+        if (this.spawnCooldown < 0) {
+            this.spawnCooldown = 0;
         }
     }
 

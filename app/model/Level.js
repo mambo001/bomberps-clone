@@ -46,7 +46,7 @@ class Level {
         console.log("exploding tile x=%i y=%i", x, y);
         for (const player of this.players) {
             if (player.tileX == x && player.tileY == y) {
-                // TODO : player dies
+                this._party.killPlayer(player);
             }
         }
         // Destroy adjacent obstacles if they exists
@@ -124,7 +124,19 @@ class Level {
         return false;
     }
 
+    spawnPlayer(player) {
+        player.visible = true;
+        player.x = player.spawnX + 0.5;
+        player.y = player.spawnY + 0.5;
+    }
+
     updatePlayer(delta, player) {
+        if (player.dead && player.lives > 0 && player.spawnCooldown === 0) {
+            this.spawnPlayer(player);
+            player.dead = false;
+        }
+        if (player.dead) return;
+        // Player collision detection
         if (player.moving.length == 0) {
             player.isDirty = false;
         } else {
