@@ -109,10 +109,7 @@ export default {
         this.socket.on("join-game", () => {
             if (!this.gameState.inGame) {
                 this.gameState.inGame = true;
-                this.gameState.app.stage.removeChild(
-                    this.gameState.uiContainer
-                );
-                this.gameState.app.stage.addChild(this.gameState.mainContainer);
+                this.gameState.setScreen("ingame");
             }
         });
         this.socket.on("leave-game", () => {
@@ -139,19 +136,14 @@ export default {
 
         this.socket.on("connectedAs", ({ username }) => {
             console.log("connected", username);
-            this.gameState.uiContainer.removeChild(
-                this.gameState.loginButtonGroup
-            );
-            this.gameState.queueJoinBtn.addToContainer(
-                this.gameState.uiContainer
-            );
             this.gameState.connected = true;
             this.gameState.connectedAs = username;
+            this.gameState.setScreen("mainMenu");
+
             history.pushState({}, "bomberps", "/");
         });
         this.socket.on("game-info", info => {
             this.gameState.gameInfo = info;
-            this.gameState.updateInfo();
         });
     }
 };

@@ -1,23 +1,14 @@
 import Player from "./player";
 import * as PIXI from "pixi.js";
-
-let style = new PIXI.TextStyle({
-    fontFamily: "Arial",
-    fontSize: 24,
-    align: "center",
-    fill: 0xff0000
-});
+import ingame from "./screens/GameScreen";
 
 export default class GameState {
     constructor(app) {
         this.inGame = false;
         this.app = null;
-        this.mainContainer = null;
-        this.playerContainer = null;
-        this.tileContainer = null;
-        this.bonusContainer = null;
-        this.effectContainer = null;
-        this.uiContainer = null;
+        this.screenContainer = new PIXI.Container();
+        this.currentScreen = null;
+        this.screens = {};
         this.hudContainer = null;
         this.connected = false;
         this.map = [
@@ -70,6 +61,20 @@ export default class GameState {
             }
         }
     }
+
+    setScreen(screen) {
+        if (this.currentScreen !== null) {
+            this.currentScreen.hide(this, this.socketManager);
+            this.screenContainer.removeChild(this.currentScreen);
+        }
+        if (typeof this.screens[screen] === "undefined") {
+            this.currentScreen = null;
+            return;
+        }
+        this.currentScreen = this.screens[screen];
+        this.currentScreen.show(this, this.socketManager);
+        this.screenContainer.addChild(this.currentScreen);
+    }
     resetStage() {
         for (let y = 0; y < this.map.length; y++) {
             for (let x = 0; x < this.map[y].length; x++) {
@@ -104,7 +109,7 @@ export default class GameState {
     }
     addPlayer(id) {
         let player = new Player(id, "bomberman");
-        this.playerContainer.addChild(player);
+        this.screens.ingame.playerContainer.addChild(player);
         this.players[id] = player;
         console.log("Added player ", player);
     }
@@ -116,7 +121,7 @@ export default class GameState {
         entity.width = 17 * (TILE_SIZE / 18);
         entity.height = TILE_SIZE;
         entity.anchor.set(0.5);
-        this.bonusContainer.addChild(entity);
+        this.screens.ingame.bonusContainer.addChild(entity);
         this.entities.push(entity);
     }
     updateEntity(id, x, y) {
@@ -185,7 +190,7 @@ export default class GameState {
         graphics.endFill();
         graphics.zIndex = 25;
 
-        this.effectContainer.addChild(graphics);
+        this.screens.ingame.effectContainer.addChild(graphics);
         setTimeout(() => {
             console.log("Destroying explosion");
             graphics.destroy();
@@ -237,7 +242,7 @@ export default class GameState {
                     sprite.type = map[y][x];
 
                     this.map[y][x] = sprite;
-                    this.tileContainer.addChild(sprite);
+                    this.screens.ingame.tileContainer.addChild(sprite);
                 }
                 sprite = null;
             }
@@ -265,25 +270,7 @@ export default class GameState {
             sprite.type = tile;
 
             this.map[y][x] = sprite;
-            this.tileContainer.addChild(sprite);
+            this.screens.ingame.tileContainer.addChild(sprite);
         }
-    }
-    addHUDText() {
-        this.userText = new PIXI.Text("", style);
-        this.userText.x = 15;
-        this.userText.y = 15;
-        this.hudContainer.addChild(this.userText);
-
-        this.queueSizeTxt = new PIXI.Text("", style);
-        this.queueSizeTxt.x = 15;
-        this.queueSizeTxt.y = 40;
-        this.hudContainer.addChild(this.queueSizeTxt);
-    }
-
-    updateInfo() {
-        if (this.connected) this.userText.text = "user: " + this.connectedAs;
-
-        this.queueSizeTxt.text =
-            "" + this.gameInfo.queueSize + " personne(s) dans la file";
     }
 }
