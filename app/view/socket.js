@@ -147,8 +147,11 @@ export default {
             );
             this.gameState.connected = true;
             this.gameState.connectedAs = username;
-            this.gameState.addHUDText();
             history.pushState({}, "bomberps", "/");
+        });
+        this.socket.on("game-info", info => {
+            this.gameState.gameInfo = info;
+            this.gameState.updateInfo();
         });
     }
 };

@@ -141,4 +141,6 @@ function init() {
     mainContainer.addChild(gameState.bonusContainer);
     mainContainer.addChild(gameState.effectContainer);
     mainContainer.addChild(gameState.playerContainer);
+
+    gameState.addHUDText();
 }

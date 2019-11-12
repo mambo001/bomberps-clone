@@ -19,7 +19,7 @@ export default class GameState {
         this.effectContaine = null;
         this.uiContaine = null;
         this.hudContaine = null;
-        this.connecte = false;
+        this.connected = false;
         this.map = [
             [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
             [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
@@ -39,6 +39,9 @@ export default class GameState {
         this.players = {};
         this.entities = [];
         this.effects = [];
+        this.gameInfo = {
+            queueSize: -1
+        };
 
         app.ticker.add(delta => {
             this.update(delta);
@@ -266,11 +269,21 @@ export default class GameState {
         }
     }
     addHUDText() {
-        if (this.connected) {
-            let text = new PIXI.Text("user: " + this.connectedAs, style);
-            text.x = 15;
-            text.y = 15;
-            this.hudContainer.addChild(text);
-        }
+        this.userText = new PIXI.Text("", style);
+        this.userText.x = 15;
+        this.userText.y = 15;
+        this.hudContainer.addChild(this.userText);
+
+        this.queueSizeTxt = new PIXI.Text("", style);
+        this.queueSizeTxt.x = 15;
+        this.queueSizeTxt.y = 40;
+        this.hudContainer.addChild(this.queueSizeTxt);
+    }
+
+    updateInfo() {
+        if (this.connected) this.userText.text = "user: " + this.connectedAs;
+
+        this.queueSizeTxt.text =
+            "" + this.gameInfo.queueSize + " personne(s) dans la file";
     }
 }

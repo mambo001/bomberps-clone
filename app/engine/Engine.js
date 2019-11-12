@@ -67,10 +67,11 @@ class Engine {
 
         this.registerControllers();
 
-        this.partyController.createNewParty();
-
         this.io.on("connection", socket => {
             console.log("A user connected");
+            socket.emit("game-info", {
+                queueSize: this.queueController.queueSize
+            });
 
             socket.on("login-as-guest", () => {
                 socket.userinfo = new UserInfo("player-" + id.toString());

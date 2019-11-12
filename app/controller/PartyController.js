@@ -15,14 +15,26 @@ class PartyController extends Controller {
             console.log("Reached party count limit");
             return;
         }
-        this._partyList[0] = new Party(0);
+        let party = new Party(nextId++);
+        this._partyList.push(party);
+        this._partyCount;
+        return party;
+    }
+
+    removeParty(party) {
+        for (let i = 0; i < this._partyCount; i++) {
+            if (this._partyList[i].id === party.id) {
+                party.dispose();
+                this._partyList.splice(i, 1);
+            }
+        }
     }
 
     getPartyFromId(id) {
-        return this._partyList[id];
+        return this._partyList.find(party => {
+            return party.id === id;
+        });
     }
-
-    deleteParty() {}
 
     playerLeave(socket) {
         let party = this.getPartyFromId(socket.partyId);
