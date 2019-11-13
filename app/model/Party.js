@@ -199,18 +199,19 @@ class Party {
     }
 
     killPlayer(player) {
-        if (player.lives < 0) return;
         player.dead = true;
+        if (player.lives < 0) return;
         player.visible = false;
         player.lives--;
+        player.spawnCooldown = 3.5;
+        console.log("killing player %s, %i", player.id, player.lives);
+
         if (player.lives < 0) {
             this.runningPlayers.splice(this.runningPlayers.indexOf(player), 1);
             // if there is only one remaining player, we end the game
             if (this.runningPlayers.length === 1) {
                 this.end();
             }
-        } else {
-            player.spawnCooldown = 3.5;
         }
 
         this.broadcast("player-update", {

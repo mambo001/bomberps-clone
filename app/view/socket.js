@@ -57,6 +57,8 @@ export default {
     },
     subscribe() {
         this.socket.on("player-add", ({ id, x, y, speed }) => {
+            if (!this.gameState.inGame) return;
+
             this.gameState.addPlayer(id);
             console.log("event player-add ", id, x, y);
             if (typeof x !== "undefined" && typeof y !== "undefined") {
@@ -69,6 +71,8 @@ export default {
         this.socket.on(
             "player-update",
             ({ id, x, y, speed, visible, moving, direction }) => {
+                if (!this.gameState.inGame) return;
+
                 if (typeof x !== "undefined" && typeof y !== "undefined") {
                     this.gameState.players[id].setPos(x, y);
                 }
@@ -87,20 +91,30 @@ export default {
             }
         );
         this.socket.on("player-remove", ({ id }) => {
+            if (!this.gameState.inGame) return;
+
             let player = this.gameState.players[id];
             player.destroy();
             delete this.gameState.players[id];
         });
         this.socket.on("entity-add", ({ id, texture, x, y }) => {
+            if (!this.gameState.inGame) return;
+
             this.gameState.addEntity(id, texture, x, y);
         });
         this.socket.on("entity-update", ({ id, x, y }) => {
+            if (!this.gameState.inGame) return;
+
             this.gameState.updateEntity(id, x, y);
         });
         this.socket.on("entity-remove", ({ id }) => {
+            if (!this.gameState.inGame) return;
+
             this.gameState.removeEntity(id);
         });
         this.socket.on("effect", param => {
+            if (!this.gameState.inGame) return;
+
             if (param.type === "explosion") {
                 console.log("creating explosion");
                 this.gameState.createExplosion(param.x, param.y, param.radius);
@@ -108,23 +122,17 @@ export default {
         });
         this.socket.on("join-game", () => {
             if (!this.gameState.inGame) {
+                console.log("Starting game");
                 this.gameState.inGame = true;
                 this.gameState.setScreen("ingame");
             }
         });
-        this.socket.on("leave-game", () => {
-            if (this.gameState.inGame) {
-                this.gameState.inGame = false;
-                this.gameState.app.stage.removeChild(
-                    this.gameState.mainContainer
-                );
-                this.gameState.app.stage.addChild(this.gameState.uiContainer);
-
-                this.gameState.resetStage();
-            }
-        });
         this.socket.on("end-game", ({ scores }) => {
             this.gameState.scores = scores;
+            this.gameState.inGame = false;
+            this.gameState.resetStage();
+            console.log("Leaving game");
+
             this.gameState.setScreen("endGame");
         });
         this.socket.on("map-set", map => {

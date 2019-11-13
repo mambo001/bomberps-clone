@@ -13,6 +13,11 @@ class QueueController extends Controller {
             let party = this.partyController.createNewParty();
             let playerPool = this.pickPlayerPool(2);
             for (const player of playerPool) {
+                console.log(player.userinfo.name);
+                player.emit("join-game");
+            }
+
+            for (const player of playerPool) {
                 player.inQueue = false;
                 this._queue.splice(
                     this._queue.findIndex(x => {

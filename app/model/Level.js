@@ -43,13 +43,14 @@ class Level {
     }
 
     explodeTile(x, y, caster) {
-        console.log("exploding tile x=%i y=%i", x, y);
         for (const player of this.players) {
-            if (player.id !== caster.id) {
-                caster.score++;
-            }
-            if (player.tileX == x && player.tileY == y) {
-                this._party.killPlayer(player);
+            if (!player.dead) {
+                if (player.id !== caster.id) {
+                    caster.score++;
+                }
+                if (player.tileX == x && player.tileY == y) {
+                    this._party.killPlayer(player);
+                }
             }
         }
         // Destroy adjacent obstacles if they exists
@@ -129,7 +130,7 @@ class Level {
     }
 
     updatePlayer(delta, player) {
-        if (player.dead && player.lives > 0 && player.spawnCooldown === 0) {
+        if (player.dead && player.lives >= 0 && player.spawnCooldown === 0) {
             this._party.spawnPlayer(player);
             player.dead = false;
         }

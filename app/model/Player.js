@@ -10,7 +10,7 @@ class Player extends Entity {
         this.visible = true;
 
         this.dead = false;
-        this.lives = 3;
+        this.lives = 1;
         this.spawnCooldown = 0;
 
         this.score = 0;
@@ -89,6 +89,9 @@ class Player extends Entity {
 
     subscribe(party) {
         this.socket.on("player-input", ({ direction, move }) => {
+            if (this.dead) {
+                return;
+            }
             if (move) {
                 //console.log("Player %s started moving %s", this.id, direction);
                 //console.log("Added %s to displacement queue", direction);

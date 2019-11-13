@@ -83,8 +83,8 @@ export default class GameState {
                 }
             }
         }
-        for (const player of this.players) {
-            player.destroy();
+        for (let prop in this.players) {
+            this.players[prop].destroy();
         }
         for (const entity of this.entities) {
             entity.destroy();
@@ -105,7 +105,7 @@ export default class GameState {
             [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
         ];
         this.entities = [];
-        this.players = [];
+        this.players = {};
     }
     addPlayer(id) {
         let player = new Player(id, "bomberman");

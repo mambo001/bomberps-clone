@@ -61,7 +61,6 @@ class PartyController extends Controller {
         socket.partyId = partyId;
         socket._playerInstance = player;
 
-        socket.emit("join-game");
         socket.emit("map-set", party.level.tiles);
     }
 
