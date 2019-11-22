@@ -46,10 +46,10 @@ class Level {
         for (const player of this.players) {
             if (!player.dead) {
                 if (player.id !== caster.id) {
-                    caster.score++;
-                }
-                if (player.tileX == x && player.tileY == y) {
-                    this._party.killPlayer(player);
+                    if (player.tileX == x && player.tileY == y) {
+                        this._party.killPlayer(player);
+                        caster.score++;
+                    }
                 }
             }
         }

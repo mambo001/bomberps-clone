@@ -12,7 +12,7 @@ class PartyController extends Controller {
     createNewParty() {
         if (this.partyCount >= MAX_PARTY_NUMBER) {
             console.log("Reached party count limit");
-            return;
+            return null;
         }
         let party = new Party(nextId++, this);
         this._partyList.push(party);

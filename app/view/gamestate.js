@@ -194,7 +194,7 @@ export default class GameState {
         setTimeout(() => {
             console.log("Destroying explosion");
             graphics.destroy();
-        }, 3000);
+        }, 750);
     }
     setMap(map) {
         for (let y = 0; y < this.map.length; y++) {

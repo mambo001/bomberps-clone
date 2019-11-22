@@ -5,13 +5,19 @@ class QueueController extends Controller {
         super("queue", engine);
         this._queue = [];
         this.partyController = this.engine.partyController;
+        this._handle = setInterval(() => this.updateQueue(), 5000);
     }
 
     updateQueue() {
-        if (this._queue.length % 2 === 0) {
+        console.log("Updating queue...");
+        if (this._queue.length >= 2) {
             console.log("Launching party");
             let party = this.partyController.createNewParty();
-            let playerPool = this.pickPlayerPool(2);
+            if (party == null) {
+                console.log("Reached party count limit");
+            }
+            let playerPool = this.pickPlayerPool(4);
+            console.log("Creating party with %i players", playerPool.length);
             for (const player of playerPool) {
                 console.log(player.userinfo.name);
                 player.emit("join-game");
@@ -26,11 +32,11 @@ class QueueController extends Controller {
                 );
                 this.partyController.putPlayerInParty(player, party.id);
             }
+            console.log("New queue size : ", this.queueSize);
+            this.engine.io.emit("game-info", {
+                queueSize: this.queueSize
+            });
         }
-        console.log("New queue size : ", this.queueSize);
-        this.engine.io.emit("game-info", {
-            queueSize: this.queueSize
-        });
     }
 
     joinQueue(socket) {
@@ -38,7 +44,11 @@ class QueueController extends Controller {
         if (socket.inQueue || socket.isInParty) return;
         this._queue.push(socket);
         socket.inQueue = true;
-        this.updateQueue();
+        console.log("New queue size : ", this.queueSize);
+
+        this.engine.io.emit("game-info", {
+            queueSize: this.queueSize
+        });
     }
 
     pickPlayerPool(size) {
@@ -47,12 +57,10 @@ class QueueController extends Controller {
         for (let i = 0; i < this._queue.length; i++) {
             availableIndexes.push(i);
         }
-        if (size === 2) {
-            for (let i = 0; i < size; i++) {
-                let randomInt = this.randomInt(0, availableIndexes.length - 1);
-                players.push(this._queue[availableIndexes[randomInt]]);
-                availableIndexes.splice(randomInt, 1);
-            }
+        while (players.length < size && availableIndexes.length != 0) {
+            let randomInt = this.randomInt(0, availableIndexes.length - 1);
+            players.push(this._queue[availableIndexes[randomInt]]);
+            availableIndexes.splice(randomInt, 1);
         }
         return players;
     }
