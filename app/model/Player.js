@@ -49,6 +49,15 @@ class Player extends Entity {
         }
     }
 
+    resetDisplacement() {
+        this.displacementQueue = [];
+        this.currentDisplacement = "none";
+        this.targetTile = {
+            x: -1,
+            y: -1
+        };
+    }
+
     get canBomb() {
         return this.currentCooldown === 0;
     }
@@ -76,7 +85,6 @@ class Player extends Entity {
     }
 
     set moving(m) {
-        if (m !== this.moving) this.isDirty = true;
         this._moving = m;
     }
 
@@ -96,7 +104,6 @@ class Player extends Entity {
                 //console.log("Player %s started moving %s", this.id, direction);
                 //console.log("Added %s to displacement queue", direction);
                 this.displacementQueue.push(direction);
-                this.moving = true;
             } else {
                 this.displacementQueue.splice(
                     this.displacementQueue.indexOf(direction),

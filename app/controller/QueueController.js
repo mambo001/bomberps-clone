@@ -10,12 +10,16 @@ class QueueController extends Controller {
 
     updateQueue() {
         console.log("Updating queue...");
-        if (this._queue.length >= 2) {
-            console.log("Launching party");
+        if (
+            this._queue.length >= 2 ||
+            (process.env.NODE_ENV === "development" && this._queue.length >= 1)
+        ) {
             let party = this.partyController.createNewParty();
             if (party == null) {
-                console.log("Reached party count limit");
+                return;
             }
+            console.log("Launching party");
+
             let playerPool = this.pickPlayerPool(4);
             console.log("Creating party with %i players", playerPool.length);
             for (const player of playerPool) {

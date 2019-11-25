@@ -44,6 +44,17 @@ class Party {
     }
 
     update(delta) {
+        // if there is only one remaining player, we end the game
+        if (process.env.NODE_ENV === "development") {
+            if (this.runningPlayers.length < 1) {
+                this.end();
+            }
+        } else {
+            if (this.runningPlayers.length <= 1) {
+                this.end();
+            }
+        }
+
         let bomb;
         for (let i = 0; i < this.level.bombs.length; i++) {
             bomb = this.level.bombs[i];
@@ -190,11 +201,10 @@ class Party {
         this.broadcast("player-update", {
             id: player.id,
             x: player.x,
-            y: player.y
-        });
-        this.broadcast("player-update", {
-            id: player.id,
-            visible: player.visible
+            y: player.y,
+            visible: player.visible,
+            moving: player.moving,
+            direction: player.currentDisplacement
         });
     }
 
@@ -204,19 +214,18 @@ class Party {
         player.visible = false;
         player.lives--;
         player.spawnCooldown = 3.5;
+        player.resetDisplacement();
         console.log("killing player %s, %i", player.id, player.lives);
 
         if (player.lives < 0) {
             this.runningPlayers.splice(this.runningPlayers.indexOf(player), 1);
-            // if there is only one remaining player, we end the game
-            if (this.runningPlayers.length === 1) {
-                this.end();
-            }
         }
 
         this.broadcast("player-update", {
             id: player.id,
-            visible: player.visible
+            visible: player.visible,
+            moving: player.moving,
+            direction: player.currentDisplacement
         });
     }
 

@@ -1,6 +1,6 @@
 const Entity = require("./Entity");
 
-const DEFAULT_BOMB_EXPLOSION_TIME = 1;
+const DEFAULT_BOMB_EXPLOSION_TIME = 2.5;
 
 class Bomb extends Entity {
     constructor(player, id, x, y) {

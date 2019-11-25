@@ -23,7 +23,11 @@ class Engine {
         this.HTML_FILE = path.join(this.DIST_DIR, "index.html");
         this.PORT = process.env.PORT || 8080;
 
-        console.log("Starting bomberps");
+        if (process.env.NODE_ENV === "development") {
+            console.log("Starting bomberps (development)");
+        } else {
+            console.log("Starting bomberps");
+        }
         this.app = express();
         this.server = http.createServer(this.app);
         this.io = socketio(this.server);
