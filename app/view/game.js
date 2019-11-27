@@ -32,10 +32,14 @@ app.loader.load((loader, resources) => {
 });
 
 function init() {
-    var up = keyboard("z"),
-        down = keyboard("s"),
-        left = keyboard("q"),
-        right = keyboard("d"),
+    var up = keyboard("ArrowUp"),
+        down = keyboard("ArrowDown"),
+        left = keyboard("ArrowLeft"),
+        right = keyboard("ArrowRight"),
+        z = keyboard("z"),
+        s = keyboard("s"),
+        q = keyboard("q"),
+        d = keyboard("d"),
         bomb = keyboard(" "),
         debugReset = keyboard("r");
 
@@ -65,6 +69,30 @@ function init() {
         socketManager.sendInput("right", true);
     };
     right.release = () => {
+        socketManager.sendInput("right", false);
+    };
+    z.press = () => {
+        socketManager.sendInput("up", true);
+    };
+    z.release = () => {
+        socketManager.sendInput("up", false);
+    };
+    s.press = () => {
+        socketManager.sendInput("down", true);
+    };
+    s.release = () => {
+        socketManager.sendInput("down", false);
+    };
+    q.press = () => {
+        socketManager.sendInput("left", true);
+    };
+    q.release = () => {
+        socketManager.sendInput("left", false);
+    };
+    d.press = () => {
+        socketManager.sendInput("right", true);
+    };
+    d.release = () => {
         socketManager.sendInput("right", false);
     };
     var canBomb = true;

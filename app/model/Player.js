@@ -56,6 +56,7 @@ class Player extends Entity {
     resetDisplacement() {
         this.displacementQueue = [];
         this.currentDisplacement = "none";
+        this.moving = false;
         this.setLockedTile(this.tileX, this.tileY);
     }
 
