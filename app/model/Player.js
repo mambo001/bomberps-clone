@@ -1,4 +1,5 @@
 const Entity = require("./Entity");
+const Constants = require("../engine/Constants");
 
 const DEFAULT_PLAYER_SPEED = 5;
 const DEFAULT_PLAYER_SIZE = 1;
@@ -19,15 +20,18 @@ class Player extends Entity {
         this.isDirty = false;
         this.displacementQueue = [];
         this.currentDisplacement = "none";
-        this.targetTile = {
-            x: -1,
-            y: -1
-        };
         this._moving = false;
         this.size = DEFAULT_PLAYER_SIZE;
 
         this.spawnX = 3;
         this.spawnY = 6;
+
+        this._lockedTileX = this.spawnX;
+        this._lockedTileY = this.spawnY;
+
+        this._xDirection = 0;
+        this._yDirection = 0;
+        this._direction = -1;
 
         this.bombCooldown = 2.5;
         this.currentCooldown = 0;
@@ -52,10 +56,7 @@ class Player extends Entity {
     resetDisplacement() {
         this.displacementQueue = [];
         this.currentDisplacement = "none";
-        this.targetTile = {
-            x: -1,
-            y: -1
-        };
+        this.setLockedTile(this.tileX, this.tileY);
     }
 
     get canBomb() {
@@ -86,6 +87,45 @@ class Player extends Entity {
 
     set moving(m) {
         this._moving = m;
+    }
+
+    setLockedTile(lockedTileX, lockedTileY) {
+        this._lockedTileX = lockedTileX;
+        this._lockedTileY = lockedTileY;
+
+        if (lockedTileX != this.tileX) {
+            this._xDirection = this.lockedTileX - this.tileX > 0 ? 1 : -1;
+            this._yDirection = 0;
+            this._direction = this.xDirection > 0 ? 3 : 2;
+        } else if (lockedTileY != this.tileY) {
+            this._yDirection = this.lockedTileY - this.tileY > 0 ? 1 : -1;
+            this._xDirection = 0;
+            this._direction = this.yDirection > 0 ? 1 : 0;
+        } else {
+            this._xDirection = 0;
+            this._yDirection = 0;
+            this._direction = -1;
+        }
+    }
+
+    get lockedTileX() {
+        return this._lockedTileX;
+    }
+
+    get lockedTileY() {
+        return this._lockedTileY;
+    }
+
+    get xDirection() {
+        return this._xDirection;
+    }
+
+    get yDirection() {
+        return this._yDirection;
+    }
+
+    get direction() {
+        return this._direction;
     }
 
     bomb(party) {

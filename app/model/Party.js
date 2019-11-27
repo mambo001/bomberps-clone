@@ -26,7 +26,7 @@ class Party {
         this._id = id;
         this._partyController = controller;
 
-        this.lastUpdateTime = hrtimeMs;
+        this.lastUpdateTime = hrtimeMs();
         this._handle = setInterval(() => this.loop(), 1000 / 60);
 
         this.availableSpawns = [true, true, true, true];
