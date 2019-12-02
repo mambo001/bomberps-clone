@@ -32,6 +32,7 @@ class Party {
         this.availableSpawns = [true, true, true, true];
 
         this.level = new Level(this);
+        this.level.tiles = controller.generator.generateTiles();
         this.runningPlayers = []; // Array containing players that still have lives
     }
 
@@ -290,21 +291,7 @@ class Party {
     }
 
     _resetMap() {
-        this.level.tiles = [
-            [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
-            [1, 0, 0, 2, 2, 2, 2, 2, 2, 2, 2, 2, 0, 0, 1],
-            [1, 0, 1, 2, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1],
-            [1, 2, 2, 0, 0, 0, 0, 0, 0, 0, 0, 2, 0, 2, 1],
-            [1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1],
-            [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
-            [1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1],
-            [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
-            [1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1],
-            [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
-            [1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1],
-            [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
-            [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1]
-        ];
+        this.level.tiles = this._partyController.generator.generateTiles();
         this.broadcast("map-set", this.level.tiles);
     }
 }

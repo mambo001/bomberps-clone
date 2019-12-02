@@ -1,11 +1,13 @@
 const Party = require("../model/Party");
 const Controller = require("./Controller");
+const LevelGenerator = require("../generator/LevelGenerator");
 
 const MAX_PARTY_NUMBER = 1;
 let nextId = 0;
 class PartyController extends Controller {
     constructor(engine) {
         super("party", engine);
+        this.generator = new LevelGenerator();
         this._partyList = [];
     }
 

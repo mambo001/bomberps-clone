@@ -3,4 +3,6 @@ yarn.lock
 .vs-code/
 app/view/dist/*
 
+test.js
+
 *.log
