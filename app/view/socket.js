@@ -71,7 +71,7 @@ export default {
         this.socket.on(
             "player-update",
             ({ id, x, y, speed, visible, moving, direction }) => {
-                /*console.log("player update", {
+                console.log("player update", {
                     id,
                     x,
                     y,
@@ -79,7 +79,7 @@ export default {
                     visible,
                     moving,
                     direction
-                });*/
+                });
                 if (!this.gameState.inGame) return;
 
                 if (typeof x !== "undefined" && typeof y !== "undefined") {

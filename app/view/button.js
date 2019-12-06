@@ -28,7 +28,7 @@ export default class Button {
         this.textWidth = this.metrics.width;
         this.textHeight = this.metrics.height;
 
-        this.sprite = PIXI.Sprite.from("wall");
+        this.sprite = PIXI.Sprite.from("block.png");
         this.sprite.anchor.set(0.5);
         this.sprite.interactive = true;
         this.sprite.buttonMode = true;

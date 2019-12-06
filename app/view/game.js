@@ -8,6 +8,8 @@ import MainMenuScreen from "./screens/MainMenuScreen";
 import GameInfoHUD from "./screens/GameInfoHUD";
 import EndGameScreen from "./screens/EndGameScreen";
 
+PIXI.settings.SCALE_MODE = PIXI.SCALE_MODES.NEAREST;
+
 const app = new PIXI.Application({
     antialias: true,
     width: MAP_PIXEL_WIDTH,
@@ -21,11 +23,7 @@ const gameState = new GameState(app);
 document.body.appendChild(app.view);
 
 // load the texture we need
-app.loader.add("bomb", "assets/bomb.png");
-app.loader.add("bomberman", "assets/bomberman1.png");
-app.loader.add("explosion", "assets/explosion.png");
-app.loader.add("obstacle", "assets/obstacle.png");
-app.loader.add("wall", "assets/wall.png");
+app.loader.add("assets/spritesheet.json");
 
 app.loader.load((loader, resources) => {
     init();
@@ -110,6 +108,9 @@ function init() {
 
     gameState.app = app;
     gameState.socketManager = socketManager;
+
+    gameState.spritesheet =
+        PIXI.Loader.shared.resources["assets/spritesheet.json"];
 
     app.stage.addChild(gameState.screenContainer);
 

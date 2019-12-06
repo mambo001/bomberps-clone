@@ -11,6 +11,7 @@ export default class GameState {
         this.screens = {};
         this.hudContainer = null;
         this.connected = false;
+        this.spritesheet = null;
         this.map = [
             [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
             [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
@@ -108,7 +109,7 @@ export default class GameState {
         this.players = {};
     }
     addPlayer(id) {
-        let player = new Player(id, "bomberman");
+        let player = new Player(id, this.spritesheet);
         this.screens.ingame.playerContainer.addChild(player);
         this.players[id] = player;
         console.log("Added player ", player);
@@ -152,7 +153,7 @@ export default class GameState {
             );
         }
         for (let i = 1; i < radius; i++) {
-            if (this.map[y][x - i] !== 0) break;
+            if (this.map[y][x - i].tileType !== 0) break;
             graphics.drawRect(
                 (x - i) * TILE_SIZE,
                 y * TILE_SIZE,
@@ -161,7 +162,7 @@ export default class GameState {
             );
         }
         for (let i = 1; i < radius; i++) {
-            if (this.map[y][x + i] !== 0) break;
+            if (this.map[y][x + i].tileType !== 0) break;
             graphics.drawRect(
                 (x + i) * TILE_SIZE,
                 y * TILE_SIZE,
@@ -170,7 +171,7 @@ export default class GameState {
             );
         }
         for (let i = 1; i < radius; i++) {
-            if (this.map[y - i][x] !== 0) break;
+            if (this.map[y - i][x].tileType !== 0) break;
             graphics.drawRect(
                 x * TILE_SIZE,
                 (y - i) * TILE_SIZE,
@@ -179,7 +180,7 @@ export default class GameState {
             );
         }
         for (let i = 1; i < radius; i++) {
-            if (this.map[y + i][x] !== 0) break;
+            if (this.map[y + i][x].tileType !== 0) break;
             graphics.drawRect(
                 x * TILE_SIZE,
                 (y + i) * TILE_SIZE,
@@ -226,20 +227,28 @@ export default class GameState {
                 if (this.map[y][x] !== 0) {
                     this.map[y][x].destroy();
                 }
+                if (map[y][x] === 0) {
+                    sprite = PIXI.Sprite.from("grass.png");
+                }
                 if (map[y][x] === 1) {
-                    sprite = PIXI.Sprite.from("wall");
+                    sprite = PIXI.Sprite.from("wall.png");
                 }
                 if (map[y][x] === 2) {
-                    sprite = PIXI.Sprite.from("obstacle");
+                    sprite = PIXI.Sprite.from("block.png");
+                }
+                if (map[y][x] === 3) {
+                    sprite = PIXI.Sprite.from("solid.png");
                 }
 
                 if (sprite !== null) {
+                    sprite.tileType = map[y][x];
                     sprite.x = x * TILE_SIZE;
                     sprite.y = y * TILE_SIZE;
                     sprite.width = TILE_SIZE;
                     sprite.height = TILE_SIZE;
                     sprite.zIndex = 0;
                     sprite.type = map[y][x];
+                    sprite.anchor.set(0);
 
                     this.map[y][x] = sprite;
                     this.screens.ingame.tileContainer.addChild(sprite);
@@ -255,19 +264,21 @@ export default class GameState {
         }
         let sprite = null;
         if (tile === 0) {
-            this.map[y][x] = 0;
+            sprite = PIXI.Sprite.from("grass.png");
         }
         if (tile === 1) {
-            sprite = PIXI.Sprite.from("wall");
+            sprite = PIXI.Sprite.from("wall.png");
         }
 
         if (sprite !== null) {
             sprite.x = x * TILE_SIZE;
             sprite.y = y * TILE_SIZE;
+            sprite.tileType = tile;
             sprite.width = TILE_SIZE;
             sprite.height = TILE_SIZE;
             sprite.zIndex = 0;
             sprite.type = tile;
+            sprite.anchor.set(0);
 
             this.map[y][x] = sprite;
             this.screens.ingame.tileContainer.addChild(sprite);

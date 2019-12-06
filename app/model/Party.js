@@ -235,7 +235,7 @@ class Party {
         if (bomb !== null) {
             this.broadcast("entity-add", {
                 id: bomb.id,
-                texture: "bomb",
+                texture: "bomb.png",
                 x: bomb.x,
                 y: bomb.y
             });

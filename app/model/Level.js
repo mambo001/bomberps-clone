@@ -219,6 +219,7 @@ class Level {
                             nextPos.tileY + player.yDirection
                         );
                     } else {
+                        player.currentDisplacement = "none";
                         player.setLockedTile(player.tileX, player.tileY);
                         nextPos.x = player.lockedTileX + 0.5;
                         nextPos.y = player.lockedTileY + 0.5;
