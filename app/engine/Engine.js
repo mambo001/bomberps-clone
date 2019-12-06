@@ -123,6 +123,9 @@ class Engine {
                     if (socket.userinfo.isInParty) {
                         this.partyController.playerLeave(socket);
                     }
+                    if (socket.userinfo.inQueue) {
+                        this.queueController.leaveQueue(socket);
+                    }
                 }
             });
         });

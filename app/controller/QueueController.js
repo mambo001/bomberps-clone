@@ -9,7 +9,6 @@ class QueueController extends Controller {
     }
 
     updateQueue() {
-        console.log("Updating queue...");
         if (
             this._queue.length >= 2 ||
             (process.env.NODE_ENV === "development" && this._queue.length >= 1)
@@ -28,12 +27,7 @@ class QueueController extends Controller {
             }
 
             for (const player of playerPool) {
-                player.inQueue = false;
-                this._queue.splice(
-                    this._queue.findIndex(x => {
-                        return x.id === player.id;
-                    })
-                );
+                this.leaveQueue(player);
                 this.partyController.putPlayerInParty(player, party.id);
             }
             console.log("New queue size : ", this.queueSize);
@@ -43,11 +37,25 @@ class QueueController extends Controller {
         }
     }
 
+    leaveQueue(socket) {
+        this._queue.splice(
+            this._queue.findIndex(x => {
+                return x.id === socket.id;
+            }),
+            1
+        );
+        socket.userinfo.inQueue = false;
+        console.log("New queue size : ", this.queueSize);
+
+        this.engine.io.emit("game-info", {
+            queueSize: this.queueSize
+        });
+    }
+
     joinQueue(socket) {
-        //this.engine.partyController.putPlayerInParty(socket, 0);
-        if (socket.inQueue || socket.isInParty) return;
+        if (socket.userinfo.inQueue || socket.userinfo.isInParty) return;
         this._queue.push(socket);
-        socket.inQueue = true;
+        socket.userinfo.inQueue = true;
         console.log("New queue size : ", this.queueSize);
 
         this.engine.io.emit("game-info", {

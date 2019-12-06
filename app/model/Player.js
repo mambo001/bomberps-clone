@@ -61,7 +61,7 @@ class Player extends Entity {
     }
 
     get canBomb() {
-        return this.currentCooldown === 0;
+        return !this.dead && this.currentCooldown === 0;
     }
 
     get id() {
