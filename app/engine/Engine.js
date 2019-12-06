@@ -105,8 +105,12 @@ class Engine {
             });
 
             socket.on("debug-reset", () => {
-                let party = this.partyController.getPartyFromId(socket.partyId);
-                party._resetMap();
+                if (process.env.NODE_ENV === "development") {
+                    let party = this.partyController.getPartyFromId(
+                        socket.partyId
+                    );
+                    party._resetMap();
+                }
             });
 
             socket.on("disconnect", () => {

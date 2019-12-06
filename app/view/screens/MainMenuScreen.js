@@ -16,7 +16,7 @@ export default class MainMenuScreen extends Screen {
         queueJoinBtn.onClick = () => {
             socketManager.joinQueue();
         };
-        queueJoinBtn.addToContainer(this);
+        this.addChild(queueJoinBtn);
 
         this.gameInfoHUD = new GameInfoHUD(gameState, socketManager);
         this.addChild(this.gameInfoHUD);

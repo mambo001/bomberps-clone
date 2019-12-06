@@ -7,8 +7,9 @@ let style = new PIXI.TextStyle({
     fill: 0x000000
 });
 
-export default class Button {
+export default class Button extends PIXI.Container {
     constructor(text, x, y, width, height) {
+        super();
         this.x = x;
         this.y = y;
         this.width = width;
@@ -16,41 +17,26 @@ export default class Button {
 
         this.metrics = PIXI.TextMetrics.measureText(text, style);
 
-        let graphics = new PIXI.Graphics();
-        graphics.beginFill(0xffffff);
-        graphics.drawRect(0, 0, width, height);
-        graphics.endFill();
-
-        let renderer = PIXI.autoDetectRenderer();
-
-        let texture = renderer.generateTexture(graphics);
-
         this.textWidth = this.metrics.width;
         this.textHeight = this.metrics.height;
 
-        this.sprite = PIXI.Sprite.from("block.png");
+        this.sprite = PIXI.Sprite.from("grass.png");
         this.sprite.anchor.set(0.5);
         this.sprite.interactive = true;
         this.sprite.buttonMode = true;
-        this.sprite.x = x;
-        this.sprite.y = y;
         this.sprite.width = width;
         this.sprite.height = height;
 
         this.text = new PIXI.Text(text, style);
         this.text.anchor.set(0.5);
-        this.text.x = x;
-        this.text.y = y;
 
         this.onClick = () => {};
 
         this.sprite.on("pointerdown", () => {
             this.onClick();
         });
-    }
 
-    addToContainer(container) {
-        container.addChild(this.sprite);
-        container.addChild(this.text);
+        this.addChild(this.sprite);
+        this.addChild(this.text);
     }
 }

@@ -16,7 +16,7 @@ export default class EndGameScreen extends Screen {
         this.quitButton.onClick = () => {
             gameState.setScreen("mainMenu");
         };
-        this.quitButton.addToContainer(this);
+        this.addChild(this.quitButton);
 
         this.scoreList = [];
         for (let i = 1; i <= 4; i++) {

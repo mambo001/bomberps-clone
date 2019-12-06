@@ -19,7 +19,7 @@ export default class LoginScreen extends Screen {
             console.log("Clicked !");
             socketManager.loginAsGuest();
         };
-        playAsGuest.addToContainer(loginButtonGroup);
+        loginButtonGroup.addChild(playAsGuest);
 
         let login = new Button(
             "Se connecter (unistra)",
@@ -31,7 +31,7 @@ export default class LoginScreen extends Screen {
         login.onClick = () => {
             window.location.href = "/cas/redirect";
         };
-        login.addToContainer(loginButtonGroup);
+        loginButtonGroup.addChild(login);
 
         this.addChild(loginButtonGroup);
         this.gameInfoHUD = new GameInfoHUD(gameState, socketManager);
