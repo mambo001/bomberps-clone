@@ -9,7 +9,7 @@ export default class Screen extends PIXI.Container {
         throw new Error("show method must be implemented");
     }
 
-    show(gameState, socketManager) {
+    hide(gameState, socketManager) {
         throw new Error("hide method must be implemented");
     }
 }
