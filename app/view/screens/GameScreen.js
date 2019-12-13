@@ -26,22 +26,5 @@ export default class GameScreen extends Screen {
 
     show(gameState, socketManager) {}
 
-    hide(gameState, socketManager) {
-        this.tileContainer.removeChildren(
-            0,
-            this.tileContainer.children.length - 1
-        );
-        this.bonusContainer.removeChildren(
-            0,
-            this.bonusContainer.children.length - 1
-        );
-        this.effectContainer.removeChildren(
-            0,
-            this.effectContainer.children.length - 1
-        );
-        this.playerContainer.removeChildren(
-            0,
-            this.playerContainer.children.length - 1
-        );
-    }
+    hide(gameState, socketManager) {}
 }

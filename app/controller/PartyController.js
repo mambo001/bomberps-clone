@@ -2,26 +2,30 @@ const Party = require("../model/Party");
 const Controller = require("./Controller");
 const LevelGenerator = require("../generator/LevelGenerator");
 
-const MAX_PARTY_NUMBER = 1;
+const MAX_PARTY_NUMBER = 4;
 let nextId = 0;
 class PartyController extends Controller {
     constructor(engine) {
         super("party", engine);
         this.generator = new LevelGenerator();
         this._partyList = [];
+        this.max_party_number =
+            process.env.MAX_PARTY_NUMBER || MAX_PARTY_NUMBER;
+        this.engine.gameInfo.maxPartyNumber = this.max_party_number;
     }
 
     createNewParty() {
-        if (this.partyCount >= MAX_PARTY_NUMBER) {
+        if (this.partyCount >= this.max_party_number) {
             console.log(
                 "Reached party count limit (%i/%i)",
                 this.partyCount,
-                MAX_PARTY_NUMBER
+                this.max_party_number
             );
             return null;
         }
         let party = new Party(nextId++, this);
         this._partyList.push(party);
+        this.engine.gameInfo.partyNumber++;
         return party;
     }
 
@@ -39,6 +43,8 @@ class PartyController extends Controller {
                 this._partyList.splice(i, 1);
             }
         }
+        this.engine.gameInfo.partyNumber--;
+        this.engine.updateAllGameInfo();
     }
 
     getPartyFromId(id) {

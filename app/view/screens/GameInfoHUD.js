@@ -21,9 +21,20 @@ export default class GameInfoHUD extends Screen {
         this.queueSizeTxt.x = 15;
         this.queueSizeTxt.y = 40;
         this.addChild(this.queueSizeTxt);
+
+        this.partyCount = new PIXI.Text("", style);
+        this.partyCount.x = 700;
+        this.partyCount.y = 15;
+        this.addChild(this.partyCount);
+
         this.updateInfo = gameInfo => {
             this.queueSizeTxt.text =
                 "" + gameInfo.queueSize + " personne(s) dans la file";
+            this.partyCount.text =
+                "Parties : " +
+                gameInfo.partyNumber +
+                "/" +
+                gameInfo.maxPartyNumber;
         };
     }
 

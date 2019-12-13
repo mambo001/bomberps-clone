@@ -21,6 +21,10 @@ const gameState = new GameState(app);
 // The application will create a canvas element for you that you
 // can then insert into the DOM
 document.body.appendChild(app.view);
+app.view.style.position = "absolute";
+app.view.style.left = "50%";
+app.view.style.top = "50%";
+app.view.style.transform = "translate3d( -50%, -50%, 0 )";
 
 // load the texture we need
 app.loader.add("assets/spritesheet.json");

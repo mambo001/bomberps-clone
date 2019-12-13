@@ -135,7 +135,9 @@ export default class GameState {
     removeEntity(id) {
         for (let i = 0; i < this.entities.length; i++) {
             if (this.entities[i].eId === id) {
-                this.entities[i].destroy();
+                this.screens.ingame.bonusContainer.removeChild(
+                    this.entities[i]
+                );
                 this.entities.splice(i, 1);
                 return;
             }
@@ -201,7 +203,9 @@ export default class GameState {
         for (let y = 0; y < this.map.length; y++) {
             for (let x = 0; x < this.map[y].length; x++) {
                 if (this.map[y][x] !== 0) {
-                    this.map[y][x].destroy();
+                    this.screens.ingame.tileContainer.removeChild(
+                        this.map[y][x]
+                    );
                 }
             }
         }

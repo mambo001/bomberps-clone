@@ -9,7 +9,8 @@ class QueueController extends Controller {
     }
 
     updateQueue() {
-        if (
+        let updateInfo = false;
+        while (
             this._queue.length >= 2 ||
             (process.env.NODE_ENV === "development" && this._queue.length >= 1)
         ) {
@@ -30,10 +31,12 @@ class QueueController extends Controller {
                 this.leaveQueue(player);
                 this.partyController.putPlayerInParty(player, party.id);
             }
+            updateInfo = true;
+        }
+        if (updateInfo) {
             console.log("New queue size : ", this.queueSize);
-            this.engine.io.emit("game-info", {
-                queueSize: this.queueSize
-            });
+            this.engine.gameInfo.queueSize = this.queueSize;
+            this.engine.updateAllGameInfo();
         }
     }
 
@@ -45,22 +48,16 @@ class QueueController extends Controller {
             1
         );
         socket.userinfo.inQueue = false;
-        console.log("New queue size : ", this.queueSize);
-
-        this.engine.io.emit("game-info", {
-            queueSize: this.queueSize
-        });
     }
 
     joinQueue(socket) {
         if (socket.userinfo.inQueue || socket.userinfo.isInParty) return;
         this._queue.push(socket);
         socket.userinfo.inQueue = true;
-        console.log("New queue size : ", this.queueSize);
+        this.engine.gameInfo.queueSize = this.queueSize;
+        this.engine.updateAllGameInfo();
 
-        this.engine.io.emit("game-info", {
-            queueSize: this.queueSize
-        });
+        console.log("New queue size : ", this.queueSize);
     }
 
     pickPlayerPool(size) {

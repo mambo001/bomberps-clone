@@ -16,7 +16,14 @@ const casUrl = "https://cas.unistra.fr/cas";
 const jwtSecret = process.env.JWT_SECRET || "JWT_TOKEN";
 
 class Engine {
-    constructor() {}
+    constructor() {
+        this.gameInfo = {
+            connected: 0,
+            queueSize: 0,
+            partyNumber: 0,
+            maxPartyNumber: 0
+        };
+    }
 
     start() {
         this.DIST_DIR = path.join(__dirname, "/../view/dist");
@@ -73,13 +80,14 @@ class Engine {
 
         this.io.on("connection", socket => {
             console.log("A user connected");
-            socket.emit("game-info", {
-                queueSize: this.queueController.queueSize
-            });
+            this.updateGameInfo(socket);
 
             socket.on("login-as-guest", () => {
                 socket.userinfo = new UserInfo("player-" + id.toString());
                 console.log("Guest ", socket.userinfo.name, " connected");
+                this.gameInfo.connected++;
+                this.updateAllGameInfo();
+
                 id++;
                 socket.verifyied = true;
                 socket.emit("connectedAs", {
@@ -101,6 +109,8 @@ class Engine {
                     socket.emit("connectedAs", {
                         username: socket.userinfo.name
                     });
+                    this.gameInfo.connected++;
+                    this.updateAllGameInfo();
                 }
             });
 
@@ -115,6 +125,9 @@ class Engine {
 
             socket.on("disconnect", () => {
                 if (socket.userinfo) {
+                    this.gameInfo.connected;
+                    this.updateAllGameInfo();
+
                     console.log(
                         "Player ",
                         socket.userinfo.name,
@@ -139,6 +152,14 @@ class Engine {
     registerControllers() {
         this.partyController = new PartyController(this);
         this.queueController = new QueueController(this);
+    }
+
+    updateAllGameInfo() {
+        this.io.emit("game-info", this.gameInfo);
+    }
+
+    updateGameInfo(socket) {
+        socket.emit("game-info", this.gameInfo);
     }
 }
 
