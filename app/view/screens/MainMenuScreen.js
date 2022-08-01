@@ -7,7 +7,7 @@ export default class MainMenuScreen extends Screen {
     constructor(gameState, socketManager) {
         super();
         let queueJoinBtn = new Button(
-            "Chercher une partie",
+            "Find a game",
             gameState.app.view.width / 2,
             gameState.app.view.height / 2,
             450,

@@ -9,7 +9,7 @@ export default class LoginScreen extends Screen {
         let loginButtonGroup = new PIXI.Container();
 
         let playAsGuest = new Button(
-            "Jouer en tant qu'invité",
+            "Play as a guest",
             gameState.app.view.width / 2,
             gameState.app.view.height / 2,
             350,
@@ -22,14 +22,15 @@ export default class LoginScreen extends Screen {
         loginButtonGroup.addChild(playAsGuest);
 
         let login = new Button(
-            "Se connecter (unistra)",
+            "Login",
             gameState.app.view.width / 2,
             gameState.app.view.height / 2 - 100,
             350,
             75
         );
         login.onClick = () => {
-            window.location.href = "/cas/redirect";
+            // window.location.href = "/cas/redirect";
+            alert("No login on this version.")
         };
         loginButtonGroup.addChild(login);
 

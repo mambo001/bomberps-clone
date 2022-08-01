@@ -29,7 +29,7 @@ export default class GameInfoHUD extends Screen {
 
         this.updateInfo = gameInfo => {
             this.queueSizeTxt.text =
-                "" + gameInfo.queueSize + " personne(s) dans la file";
+                "" + gameInfo.queueSize + " person(s) in queue";
             this.partyCount.text =
                 "Parties : " +
                 gameInfo.partyNumber +

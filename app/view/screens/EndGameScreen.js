@@ -12,7 +12,7 @@ export default class EndGameScreen extends Screen {
     constructor(gameState, socketManager) {
         super();
 
-        this.quitButton = new Button("Retour menu", 100, 50, 200, 75);
+        this.quitButton = new Button("Return menu", 100, 50, 200, 75);
         this.quitButton.onClick = () => {
             gameState.setScreen("mainMenu");
         };
